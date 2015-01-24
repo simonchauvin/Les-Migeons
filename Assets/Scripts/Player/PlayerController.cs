@@ -109,30 +109,52 @@ public class PlayerController : MonoBehaviour {
 			
 			if (releaseMigeonLabel != null)
 				releaseMigeonLabel.SetActive(true);
-			
-			if (Input.GetKeyDown(KeyCode.E))
-			{
-                if(migeonItWantsToFuck)
+
+            bool releaseMigeon = false;
+
+            if (Input.GetButtonDown("Fire2"))
+            {
+                Genetics.GeneticCode code = carriedMigeon.GetComponent<MigeonBehavior>().code.createCopy();
+                Genetics.mutate(ref code);
+
+                Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, carriedMigeon.position + carriedMigeon.forward*2, Quaternion.identity) as Transform;
+                nouveauMigeon.GetComponent<MigeonBehavior>().code = code;
+                nouveauMigeon.rigidbody.isKinematic = false;
+                nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+            }
+
+            if (Input.GetButtonDown("Fire1"))
+            {
+                if (migeonItWantsToFuck)
                 {
-                    Genetics.GeneticCode code1 =  carriedMigeon.GetComponent<MigeonBehavior>().code;
-                    Genetics.GeneticCode code2 =  migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
+                    Genetics.GeneticCode code1 = carriedMigeon.GetComponent<MigeonBehavior>().code;
+                    Genetics.GeneticCode code2 = migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
                     Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
 
-                    Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position)/2,Quaternion.identity) as Transform;
+                    Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position) / 2, Quaternion.identity) as Transform;
                     nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
                     nouveauMigeon.rigidbody.isKinematic = false;
                     nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
                 }
+            }
+			
+			if (Input.GetKeyDown(KeyCode.E))
+			{
+                releaseMigeon = true;
+			}
+
+            if (releaseMigeon)
+            {
                 carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon.rigidbody.isKinematic = false;
                 carriedMigeon = null;
                 migeonItWantsToFuck = null;
                 if (grabMigeonLabel != null)
-				    grabMigeonLabel.SetActive(false);
+                    grabMigeonLabel.SetActive(false);
 
-			    if (releaseMigeonLabel != null)
-				    releaseMigeonLabel.SetActive(false);
-			}
+                if (releaseMigeonLabel != null)
+                    releaseMigeonLabel.SetActive(false);
+            }
 		}
 	}
 }

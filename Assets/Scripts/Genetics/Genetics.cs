@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class Genetics {
 
@@ -20,12 +21,22 @@ public class Genetics {
             this.nbRepeat = Random.Range(MIN_NB_REPEAT_START, MAX_NB_REPEAT_START);
         }
 
+        public GeneticCode createCopy()
+        {
+            GeneticCode code = new GeneticCode();
+            code.actions = new MIGEON_ACTION[this.actions.Length];
+            for (int i = 0; i < actions.Length; i++)
+                code.actions[i] = actions[i];
+            code.nbRepeat = nbRepeat;
+            return code;
+        }
+
         public void fill()
         {
             fillActionsEvaluated(this.actions);
         }
-
-        public void showCodeDebug()
+       
+        public string toString()
         {
             string chaine = "";
             chaine += nbRepeat;
@@ -34,8 +45,22 @@ public class Genetics {
                 chaine += actions[i] + " : ";
             chaine += actions[actions.Length - 1];
             chaine += "] = " + Genetics.scoreActions(actions);
+            return chaine;
+        }
+
+        public void outputToDebug()
+        {
+            string chaine = this.toString();
             Debug.Log(chaine);
         }
+
+        public void outputToFile(StreamWriter stream)
+        {
+            string chaine = this.toString();
+            stream.WriteLine(chaine);
+        }
+
+
     };
 
     public enum MIGEON_ACTION
@@ -48,7 +73,7 @@ public class Genetics {
         NB_ACTIONS
     };
 
-    private const int NB_TRIES_OPTIM = 50;
+    private const int NB_TRIES_OPTIM = 100;
     private const float PROBA_MUT_ACTION = 0.3f;
     private const float PROBA_MUT_NB_REPEAT = 0.3f;
    
@@ -165,8 +190,10 @@ public class Genetics {
         score += scoreOnBalance(actions);
         score += yesPutJump(actions);
         score += noPutAndMove(actions);
+        score += noDblAction(actions);
+        score += yesPutCube(actions);
 
-        return score / 4.0f;
+        return score / 6.0f;
     }
 
     private static float scoreOnTurns(MIGEON_ACTION[] actions)
@@ -189,6 +216,8 @@ public class Genetics {
         return score;
     }
 
+    //EVALUATORS
+
     private static float noPutAndMove(MIGEON_ACTION[] actions)
     {
         float score = 1.0f;
@@ -196,7 +225,7 @@ public class Genetics {
         {
             if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i+1] == MIGEON_ACTION.AVANCER)
             {
-                score -= 0.1f;
+                score -= 1.0f / (float)(actions.Length-1);
             }
 
         }
@@ -206,16 +235,57 @@ public class Genetics {
 
     private static float yesPutJump(MIGEON_ACTION[] actions)
     {
-        float score = 1.0f;
+        float score = 0.0f;
         for (int i = 0; i < actions.Length - 2; i++)
         {
             if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i + 1] == MIGEON_ACTION.JUMP)
             {
-                score += 0.1f;
+                score += 1.0f / (float)(actions.Length - 1);
             }
 
         }
 
+        return score;
+    }
+
+    private static float noDblAction(MIGEON_ACTION[] actions)
+    {
+        float score = 1.0f;
+        for (int i = 0; i < actions.Length - 2; i++)
+        {
+            if (actions[i] == actions[i + 1])
+            {
+                score -= 1.0f / (float)(actions.Length - 1);
+            }
+
+        }
+
+        return score;
+    }
+
+    private static float noJumpJump(MIGEON_ACTION[] actions)
+    {
+        float score = 1.0f;
+        for (int i = 0; i < actions.Length - 2; i++)
+        {
+            if (actions[i] == MIGEON_ACTION.JUMP && actions[i + 1] == MIGEON_ACTION.JUMP)
+            {
+                score -= 1.0f / (float)(actions.Length - 1);
+            }
+        }
+        return score;
+    }
+
+    private static float yesPutCube(MIGEON_ACTION[] actions)
+    {
+        float score = 0.0f;
+        for (int i = 0; i < actions.Length - 2; i++)
+        {
+            if (actions[i] != MIGEON_ACTION.PUT_CUBE && actions[i + 1] == MIGEON_ACTION.PUT_CUBE)
+            {
+                score += 1.0f / (float)(actions.Length - 1);
+            }
+        }
         return score;
     }
 
