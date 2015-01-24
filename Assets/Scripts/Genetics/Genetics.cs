@@ -3,6 +3,26 @@ using System.Collections;
 
 public class Genetics {
 
+    public class GeneticCode
+    {
+        public MIGEON_ACTION[] actions;
+        public int nbRepeat = 0;
+
+        private const int MIN_NB_ACTION_START = 5;
+        private const int MAX_NB_ACTION_START = 10;
+
+        private const int MIN_NB_REPEAT_START = 5;
+        private const int MAX_NB_REPEAT_START = 10;
+
+        public GeneticCode()
+        {
+            this.actions = createActions(Random.Range(MIN_NB_ACTION_START, MAX_NB_ACTION_START));
+            this.nbRepeat = Random.Range(MIN_NB_REPEAT_START, MAX_NB_REPEAT_START);
+        }
+    };
+
+
+
     public enum MIGEON_ACTION
     {
         AVANCER = 0,
@@ -14,8 +34,15 @@ public class Genetics {
     };
 
     private const int NB_TRIES_OPTIM = 20;
+    
 
-    public static MIGEON_ACTION[] createActions(int size)
+    public static GeneticCode makeGeneticCode()
+    {
+        GeneticCode code = new GeneticCode();
+        return code;
+    }
+
+    private static MIGEON_ACTION[] createActions(int size)
     {
         MIGEON_ACTION[] actions = new MIGEON_ACTION[size];
         MIGEON_ACTION[] bestActions = new MIGEON_ACTION[size];

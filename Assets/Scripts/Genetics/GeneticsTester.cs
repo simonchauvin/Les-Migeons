@@ -3,13 +3,13 @@ using System.Collections;
 
 public class GeneticsTester : MonoBehaviour {
 
-    public Genetics.MIGEON_ACTION[] actions;
+    public Genetics.GeneticCode code;
 
 	// Use this for initialization
 	void Start () {
-        actions = Genetics.createActions(10);
-        for(int i=0;i<actions.Length;i++)
-            Debug.Log(actions[i]);
+        code = Genetics.makeGeneticCode();
+        for(int i=0;i<code.actions.Length;i++)
+            Debug.Log(code.actions[i]);
 	}
 	
 	// Update is called once per frame
