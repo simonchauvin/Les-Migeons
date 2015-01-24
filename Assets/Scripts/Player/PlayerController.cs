@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	private GameObject releaseMigeonLabel;
 
     Transform carriedMigeon = null;
+    Transform migeonItWantsToFuck = null;
  
 	// Use this for initialization
 	void Start ()
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void LateUpdate ()
 	{
         if(carriedMigeon == null)
         {
@@ -49,7 +50,8 @@ public class PlayerController : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     carriedMigeon = hit.collider.transform;
-                    carriedMigeon.GetComponent<MigeonBehavior>().carried = true;
+                    carriedMigeon.GetComponent<MigeonBehavior>().takeControl(true);
+                    carriedMigeon.rigidbody.isKinematic = true;
                 }
             }
             else
@@ -63,6 +65,16 @@ public class PlayerController : MonoBehaviour {
         }
         else
 		{
+            //On porte un migeon
+            carriedMigeon.transform.LookAt(carriedMigeon.transform.position + transform.forward, Vector3.up); 
+            carriedMigeon.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+            
+            RaycastHit hit;
+            if (Physics.Raycast(carriedMigeon.transform.position, carriedMigeon.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
+                migeonItWantsToFuck = hit.transform;
+            else
+                migeonItWantsToFuck = null;
+
 			if (grabMigeonLabel != null)
 				grabMigeonLabel.SetActive(false);
 			
@@ -71,14 +83,14 @@ public class PlayerController : MonoBehaviour {
 			
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				carriedMigeon.GetComponent<MigeonBehavior>().carried = false;
+                carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
+                carriedMigeon.rigidbody.isKinematic = false;
                 carriedMigeon = null;
                 if (grabMigeonLabel != null)
 				    grabMigeonLabel.SetActive(false);
 
 			    if (releaseMigeonLabel != null)
 				    releaseMigeonLabel.SetActive(false);
-
 			}
 		}
 	}

@@ -41,30 +41,36 @@ public class MigeonBehavior : MonoBehaviour {
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
 	}
+
+    public void takeControl(bool take)
+    {
+        carried = take;
+        if (carried)
+        {    
+            wasCarried = true;
+            jobToDo = false;
+            isJumping = false;
+            isFalling = false;
+            isTurning = false;
+            isGoingForward = false;
+        }
+        else if (wasCarried == true)
+        {
+            wasCarried = false;
+            snapToFloor();     
+            startJob();
+        }
+    }
 	
 	void Update(){
-		if (carried){
-			rigidbody.isKinematic = true;
-			transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
-			transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); ;
-			wasCarried = true ;
-			
-			jobToDo = false ;
-			isJumping = false ;
-			isFalling = false ;
-			isTurning = false ;
-			isGoingForward = false ;
-		}else if(wasCarried == true && carried == false){
-			rigidbody.isKinematic = false;
-			snapToFloor() ;
-			rigidbody.WakeUp();
-			wasCarried = false ;
-			startJob () ;
-		}
+
 	}
 
 	// Update is called once per frame
 	void FixedUpdate() {
+        if (carried)
+            return;
+
 		playerPos = MyMaster.transform.position ;
 		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
 			inPlayerVicinity = true ;
@@ -86,12 +92,12 @@ public class MigeonBehavior : MonoBehaviour {
 				}
 				
 				
-				/*
-				if(!isGoingForward && !inPlayerVicinity){
-					Debug.Log("going to my master") ;
-					goForward(5.0f, playerPos) ;
-				}
-				*/
+				
+				//if(!isGoingForward && !inPlayerVicinity){
+				//	Debug.Log("going to my master") ;
+				//	goForward(5.0f, playerPos) ;
+				//}
+				
 			}
 		}
 		
