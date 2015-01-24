@@ -7,7 +7,7 @@ public class MigeonBehavior : MonoBehaviour {
 	private Transform player;
 
 	protected int[] actionsList ;
-	protected Genetics.GeneticCode code ;
+	public Genetics.GeneticCode code { get; set; }
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
@@ -41,7 +41,8 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		code = Genetics.makeGeneticCode() ;
+        if(code == null) //si pas deja set par un instantiate
+		    code = Genetics.makeGeneticCode() ;
 		player = GameObject.Find("Player").transform;
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
