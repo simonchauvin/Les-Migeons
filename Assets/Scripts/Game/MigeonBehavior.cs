@@ -10,18 +10,20 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
+	protected float distToFloor = 0.5f ;
 
 	protected float moveDistance = 5.0f ;
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
 	protected bool jobToDo = true ;
-	protected Vector3 target ;
-	protected Vector3 eulerAngleTarget ;
+	public Vector3 target ;
+	public Vector3 eulerAngleTarget ;
 	
 	protected bool isGoingForward = false ;
 	protected bool isTurning = false ;
 	
 	public bool carried { get; set; }
+	protected bool wasCarried = false ;
 	
 	// Use this for initialization
 	void Start () {
@@ -83,19 +85,23 @@ public class MigeonBehavior : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate() {
-		if(jobToDo){
-			doYourJob() ;
-		}
+		
 
 		if (carried)
 		{
 			rigidbody.Sleep();
 			transform.position = player.position + transform.forward * 2f;
 			transform.forward = Camera.main.transform.forward;
+			wasCarried = true ;
 		}
-		else
+		else if(wasCarried == true && carried == false)
 		{
+			snapToFloor() ;
 			rigidbody.WakeUp();
+			wasCarried = false ;
+			startJob () ;
+		}else if(jobToDo){
+			doYourJob() ;
 		}
 	}
 
@@ -198,8 +204,25 @@ public class MigeonBehavior : MonoBehaviour {
 
 	void createBlock(){
 		//Debug.Log("create block") ;
-		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		cube.transform.position = transform.forward*2 + rigidbody.position ;
+		float distance = 2 ;
+		if(canIGoForward(transform.forward, distance+0.5f)){
+			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			cube.transform.position = transform.forward*distance + rigidbody.position ;
+		}else{
+			//peut pas poser
+		}
 	}
-
+	
+	void snapToFloor(){
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, -Vector3.up, out hit)){
+			
+			transform.position = hit.point+new Vector3(0.0f,distToFloor,0.0f) ;
+			float newY = Mathf.Round(transform.rotation.eulerAngles.y / 45.0f) * 45.0f ;
+			Debug.Log (transform.rotation.eulerAngles.y+" "+newY) ;
+			transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
+			//transform.position = transform.position ;
+		}
+	}
+	
 }
