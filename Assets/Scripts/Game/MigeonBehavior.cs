@@ -42,22 +42,11 @@ public class MigeonBehavior : MonoBehaviour {
 		MyMaster = GameObject.Find("Player") ;
 	}
 	
-	
-
-	// Update is called once per frame
-	void Update() {
-		playerPos = MyMaster.transform.position ;
-		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
-			inPlayerVicinity = true ;
-		}else{
-			inPlayerVicinity = false ;
-		}
-	
-	
+	void Update(){
 		if (carried){
 			rigidbody.isKinematic = true;
-            transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
-            transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); ;
+			transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+			transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); ;
 			wasCarried = true ;
 			
 			jobToDo = false ;
@@ -66,29 +55,44 @@ public class MigeonBehavior : MonoBehaviour {
 			isTurning = false ;
 			isGoingForward = false ;
 		}else if(wasCarried == true && carried == false){
-            rigidbody.isKinematic = false;
+			rigidbody.isKinematic = false;
 			snapToFloor() ;
 			rigidbody.WakeUp();
 			wasCarried = false ;
 			startJob () ;
-		}else if(jobToDo){
-			doYourJob() ;
-		}else if(!jobToDo){
-			if(!isJumping){
-				Debug.Log("going to my master") ;
-			}
-			
-			if(transform.position.y > distToFloor || isJumping){
-				if(jump()){
-					turn (1) ;
+		}
+	}
+
+	// Update is called once per frame
+	void FixedUpdate() {
+		playerPos = MyMaster.transform.position ;
+		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
+			inPlayerVicinity = true ;
+		}else{
+			inPlayerVicinity = false ;
+		}
+	
+		if(!carried && !wasCarried){
+			if(jobToDo){
+				doYourJob() ;
+			}else{
+				if(transform.position.y > distToFloor && !isJumping){
+					Debug.Log("going on ground") ;
 				}
+				if(transform.position.y > distToFloor || isJumping){
+					if(jump()){
+						turn (1) ;
+					}
+				}
+				
+				
+				/*
+				if(!isGoingForward && !inPlayerVicinity){
+					Debug.Log("going to my master") ;
+					goForward(5.0f, playerPos) ;
+				}
+				*/
 			}
-			/*
-			if(!isGoingForward && !inPlayerVicinity){
-				Debug.Log("going to my master") ;
-				goForward(5.0f, playerPos) ;
-			}
-			*/
 		}
 		
 		RaycastHit hit;
@@ -143,6 +147,7 @@ public class MigeonBehavior : MonoBehaviour {
 			repeatAction++ ;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
+				Debug.Log("job finished") ;
 			}
 		}
 	}
