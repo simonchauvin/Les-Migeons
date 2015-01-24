@@ -112,6 +112,17 @@ public class PlayerController : MonoBehaviour {
 			
 			if (Input.GetKeyDown(KeyCode.E))
 			{
+                if(migeonItWantsToFuck)
+                {
+                    Genetics.GeneticCode code1 =  carriedMigeon.GetComponent<MigeonBehavior>().code;
+                    Genetics.GeneticCode code2 =  migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
+                    Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
+
+                    Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position)/2,Quaternion.identity) as Transform;
+                    nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
+                    nouveauMigeon.rigidbody.isKinematic = false;
+                    nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+                }
                 carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon.rigidbody.isKinematic = false;
                 carriedMigeon = null;

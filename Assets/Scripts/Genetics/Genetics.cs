@@ -161,6 +161,16 @@ public class Genetics {
 
     private static float scoreActions(MIGEON_ACTION[] actions)
     {
+        float score = scoreOnTurns(actions);
+        score += scoreOnBalance(actions);
+        score += yesPutJump(actions);
+        score += noPutAndMove(actions);
+
+        return score / 4.0f;
+    }
+
+    private static float scoreOnTurns(MIGEON_ACTION[] actions)
+    {
         float score = 1.0f;
         int lastTurn = -1;
         for (int i = 0; i < actions.Length; i++)
@@ -173,10 +183,62 @@ public class Genetics {
                 }
                 lastTurn = i;
             }
-            
+
         }
 
         return score;
+    }
+
+    private static float noPutAndMove(MIGEON_ACTION[] actions)
+    {
+        float score = 1.0f;
+        for (int i = 0; i < actions.Length-1; i++)
+        {
+            if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i+1] == MIGEON_ACTION.AVANCER)
+            {
+                score -= 0.1f;
+            }
+
+        }
+
+        return score;
+    }
+
+    private static float yesPutJump(MIGEON_ACTION[] actions)
+    {
+        float score = 1.0f;
+        for (int i = 0; i < actions.Length - 2; i++)
+        {
+            if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i + 1] == MIGEON_ACTION.JUMP)
+            {
+                score += 0.1f;
+            }
+
+        }
+
+        return score;
+    }
+
+    private static float scoreOnBalance(MIGEON_ACTION[] actions)
+    {
+        int [] nbEach = new int [(int)MIGEON_ACTION.NB_ACTIONS];
+        for (int i = 0; i < actions.Length; i++)
+        {
+            nbEach[(int)actions[i]]++;
+        }
+
+        float moyenne = 0;
+        for (int i = 0; i < (int)MIGEON_ACTION.NB_ACTIONS; i++)
+            moyenne += nbEach[i];
+        
+        moyenne /= (float)MIGEON_ACTION.NB_ACTIONS;
+
+        float variance = 0;
+        for (int i = 0; i < (int)MIGEON_ACTION.NB_ACTIONS; i++)
+            variance += Mathf.Abs(moyenne-nbEach[i]);
+        variance /= (float)MIGEON_ACTION.NB_ACTIONS;
+
+        return 1.0f - (variance / (float)actions.Length);
     }
 
     

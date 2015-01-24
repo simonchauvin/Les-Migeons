@@ -7,7 +7,7 @@ public class MigeonBehavior : MonoBehaviour {
 	private Transform player;
 
 	protected int[] actionsList ;
-	protected Genetics.GeneticCode code ;
+	public Genetics.GeneticCode code { get; set; }
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
@@ -41,13 +41,18 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		code = Genetics.makeGeneticCode() ;
+        if(code == null) //si pas deja set par un instantiate
+		    code = Genetics.makeGeneticCode() ;
 		player = GameObject.Find("Player").transform;
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
 		parentCube = GameObject.Find("cubes") ;
-		myBlaze = new Color(Random.value,Random.value,Random.value,0.5f) ;
-		renderer.material.color = myBlaze ;
+		if(isSlave){
+			myBlaze = new Color(Random.Range(0f,0.5f),Random.value,Random.Range(0.6f,1f),0.5f) ;
+		}else{
+			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
+		}
+		transform.FindChild("migeon").renderer.material.color = myBlaze ;
 	}
 
     public void takeControl(bool take)
@@ -227,7 +232,7 @@ public class MigeonBehavior : MonoBehaviour {
 		return false ;
 	}
 
-	bool jump(){
+	public bool jump(){
 		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
@@ -294,5 +299,4 @@ public class MigeonBehavior : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
 		gameObject.layer = oldLayer;
 	}
-	
 }
