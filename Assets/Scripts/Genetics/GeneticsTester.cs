@@ -3,17 +3,36 @@ using System.Collections;
 
 public class GeneticsTester : MonoBehaviour {
 
-    public Genetics.MIGEON_ACTION[] actions;
+    public Genetics.GeneticCode code1;
+    public Genetics.GeneticCode code2;
 
 	// Use this for initialization
 	void Start () {
-        actions = Genetics.createActions(10);
-        for(int i=0;i<actions.Length;i++)
-            Debug.Log(actions[i]);
+        code1 = Genetics.makeGeneticCode();
+        code1.showCodeDebug();
+        Genetics.mutate(ref code1);
+        code1.showCodeDebug();
+        code2 = Genetics.makeGeneticCode();
+        code2.showCodeDebug();
+        Genetics.mutate(ref code2);
+        code2.showCodeDebug();
+
+
+        Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
+        code1.showCodeDebug();
+        code2.showCodeDebug();
+        code3.showCodeDebug();
+
+        code3 = Genetics.crossOver(code1, code2);
+        code3.showCodeDebug();
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+
+
+
+    // Update is called once per frame
+    void Update()
+    {
 	    
 	}
 }
