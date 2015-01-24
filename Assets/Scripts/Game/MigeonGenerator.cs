@@ -19,7 +19,7 @@ public class MigeonGenerator : MonoBehaviour {
 	void spawnMigeon(bool slave){
 		Vector3 position = Random.insideUnitSphere * 100 ;
 		position.x = Mathf.Round (position.x) ;
-		position.y = 1.0f ;
+		position.y = 0.35f ;
 		position.z = Mathf.Round (position.z) ;
 		while(Physics.OverlapSphere(position, 0.1f).Length > 0.1f){
 			Debug.Log ("Someone already here !") ;   

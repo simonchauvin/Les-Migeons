@@ -11,7 +11,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
-	protected float distToFloor = 1.0f ;
+	protected float distToFloor = 0.35f ;
 
 	protected float autoMoveDistance = 5.0f ;
 	protected float speed = 1f ;
@@ -26,6 +26,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isTurning = false ;
 	protected bool isJumping = false ;
 	protected bool isFalling = false ;
+	protected bool wait = false ;
 	
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
@@ -47,8 +48,12 @@ public class MigeonBehavior : MonoBehaviour {
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
 		parentCube = GameObject.Find("cubes") ;
-		myBlaze = new Color(Random.value,Random.value,Random.value,0.5f) ;
-		renderer.material.color = myBlaze ;
+		if(isSlave){
+			myBlaze = new Color(Random.Range(0f,0.5f),Random.value,Random.Range(0.6f,1f),0.5f) ;
+		}else{
+			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
+		}
+		//transform.FindChild("Migeon").transform.renderer.material.color = myBlaze ;
 	}
 
     public void takeControl(bool take)
@@ -62,6 +67,7 @@ public class MigeonBehavior : MonoBehaviour {
             isFalling = false;
             isTurning = false;
             isGoingForward = false;
+            wait = false ;
         }
         else if (wasCarried == true)
         {
@@ -74,7 +80,17 @@ public class MigeonBehavior : MonoBehaviour {
 	void Update(){
 
 	}
-
+	
+	void nextStep() {
+		wait = true ;
+		Invoke ("validStep",1.0f) ;
+	}
+	
+	void validStep(){
+		stepAction++ ;
+		wait = false ;
+	}
+	
 	// Update is called once per frame
 	void FixedUpdate() {
         if (carried)
@@ -88,7 +104,7 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 	
 		if(!carried && !wasCarried){
-			if(jobToDo){
+			if(jobToDo && !wait){
 				doYourJob() ;
 			}else{
 				if(transform.position.y > distToFloor || isJumping){
@@ -128,27 +144,28 @@ public class MigeonBehavior : MonoBehaviour {
 		switch(code.actions[stepAction]){
 			case Genetics.MIGEON_ACTION.AVANCER :
 				if(goForward(autoMoveDistance)){
-					stepAction++ ;
+					 
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.TURN_LEFT :
 				if(turn (1)) {
-					stepAction++ ;
+					nextStep() ;
 				}
 				break ;
 			case Genetics.MIGEON_ACTION.TURN_RIGHT :
 				if(turn (2)) {
-					stepAction++ ;
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.JUMP :
 				if(jump ()) {
-					stepAction++ ;
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.PUT_CUBE :
 				if(createBlock()) {
-					stepAction++ ;
+					nextStep() ;
 				}
 				break;
 		}
@@ -228,7 +245,7 @@ public class MigeonBehavior : MonoBehaviour {
 		return false ;
 	}
 
-	bool jump(){
+	public bool jump(){
 		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
@@ -241,7 +258,7 @@ public class MigeonBehavior : MonoBehaviour {
 			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
 				rigidbody.AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
 			}else if(targetJump.y - rigidbody.transform.position.y >= -1.0f){
-				rigidbody.AddForce((transform.forward)*1f,ForceMode.Impulse) ;
+				rigidbody.AddForce((transform.forward)*1.2f,ForceMode.Impulse) ;
 				isFalling = true ;
 			}
 		}
@@ -264,7 +281,7 @@ public class MigeonBehavior : MonoBehaviour {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			Vector3 newPos = rigidbody.position + transform.forward*distance ;
 			newPos.x = Mathf.Round(newPos.x) ;
-			newPos.y = Mathf.Round(newPos.y)-distToFloor/2f ;
+			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor))+0.5f ;
 			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
@@ -295,5 +312,4 @@ public class MigeonBehavior : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
 		gameObject.layer = oldLayer;
 	}
-	
 }
