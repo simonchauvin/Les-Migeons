@@ -120,7 +120,8 @@ public class PlayerController : MonoBehaviour {
 
                     Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position)/2,Quaternion.identity) as Transform;
                     nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
-                    nouveauMigeon.rigidbody.velocity = Vector3.up * 3f;
+                    nouveauMigeon.rigidbody.isKinematic = false;
+                    nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
                 }
                 carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon.rigidbody.isKinematic = false;
