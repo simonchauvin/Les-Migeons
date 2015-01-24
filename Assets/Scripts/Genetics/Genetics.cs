@@ -132,7 +132,6 @@ public class Genetics {
                 bestActions = actions;
                 actions = tmp;
                 bestScore = score;
-                Debug.Log(bestScore);
                 firstGeneration = false;
             }
         }
