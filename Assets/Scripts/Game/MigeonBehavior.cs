@@ -19,31 +19,53 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isTurning = false ;
 	
 	public bool carried { get; set; }
-
+	
 	// Use this for initialization
 	void Start () {
 		carried = false ;
-		maxActions = Random.Range (5, 10);
-		//maxActions = 8 ;
+		//maxActions = Random.Range (5, 10);
+		maxActions = 5 ;
 		actionsList = new int[maxActions+1];
-		actionsList[0] = Random.Range (2, 5);
+		actionsList = getBaseActions(Random.Range (1, 4)) ;
+		//actionsList[0] = Random.Range (2, 5);
 		//actionsList[0] = 3 ;
-		for (int i = 1; i <= maxActions; i++) {
+		/*for (int i = 1; i <= maxActions; i++) {
 			actionsList[i] = Random.Range(0,5) ;
 			//actionsList[i] = 1 ;
+		}*/
+	}
+	
+	int[] getBaseActions(int idBase){
+		int[] baseActions = new int[6] ;
+		switch(idBase){
+		case 1 :
+			baseActions[0] = 10 ;
+			baseActions[1] = 0 ;
+			baseActions[2] = 1 ;
+			baseActions[3] = 4 ;
+			baseActions[4] = 1 ;
+			baseActions[5] = 0 ;
+		break ;
+		
+		case 2 :
+			baseActions[0] = 10 ;
+			baseActions[1] = 2 ;
+			baseActions[2] = 0 ;
+			baseActions[3] = 0 ;
+			baseActions[4] = 4 ;
+			baseActions[5] = 2 ;
+		break ;
+		
+		case 3 :
+			baseActions[0] = 10 ;
+			baseActions[1] = 4 ;
+			baseActions[2] = 2 ;
+			baseActions[3] = 0 ;
+			baseActions[4] = 4 ;
+			baseActions[5] = 1 ;
+		break;
 		}
-		/*
-		actionsList[1] = 0 ;
-		actionsList[2] = 2 ;
-		actionsList[3] = 0 ;
-		actionsList[4] = 2 ;
-		actionsList[5] = 0 ;
-		actionsList[6] = 4 ;
-		actionsList[7] = 1 ;
-		actionsList[8] = 0 ;
-		Debug.Log(maxActions + " " + actionsList[0]) ;
-		Debug.Log(actionsList) ;
-		*/
+		return baseActions ;
 	}
 	
 	void Update(){
@@ -76,7 +98,7 @@ public class MigeonBehavior : MonoBehaviour {
 				break;
 			case 3 :
 				//jump() ;
-				Debug.Log("jump") ;
+				//Debug.Log("jump") ;
 				break;
 			case 4 :
 				createBlock() ;
@@ -86,9 +108,9 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction > maxActions){
 			stepAction = 1 ;
 			repeatAction++ ;
-			Debug.Log("repeat") ;
+			//Debug.Log("repeat") ;
 			if(repeatAction >= actionsList[0]){
-				Debug.Log("endJob") ;
+				//Debug.Log("endJob") ;
 				jobToDo = false ;
 			}
 		}
@@ -107,16 +129,17 @@ public class MigeonBehavior : MonoBehaviour {
 			target.x = Mathf.Round(target.x) ;
 			target.y = Mathf.Round(target.y) ;
 			target.z = Mathf.Round(target.z) ;
-			Debug.Log("move "+target) ;
+			//Debug.Log("move "+target) ;
 			isGoingForward = true ;
 		}
-		if(!canIGoForward(transform.forward, moveDistance+1.0f)){
+		Vector3 dir = Vector3.Normalize(target-rigidbody.position) ;
+		if(!canIGoForward(dir, moveDistance+1.0f)){
 			isGoingForward = false ;
 			stepAction++ ;
-			Debug.Log ("cant move, skip") ;
+			//Debug.Log ("cant move, skip") ;
 			return ;
 		}
-		Vector3 step = transform.forward*moveDistance*speed ;
+		Vector3 step = dir*moveDistance*speed ;
 		// Move our position a step closer to the target.
 		rigidbody.MovePosition(rigidbody.transform.position + (step*Time.deltaTime));
 		if(Vector3.Distance(rigidbody.transform.position, target) <= .5f){
@@ -130,11 +153,11 @@ public class MigeonBehavior : MonoBehaviour {
 			if (direction == 1) {
 				//turn left
 				eulerAngleTarget = Quaternion.Euler(rigidbody.rotation.eulerAngles + new Vector3(0f,-90f,0f)).eulerAngles ;
-				Debug.Log("turn left "+eulerAngleTarget) ;
+				//Debug.Log("turn left "+eulerAngleTarget) ;
 			}else{
 				//turn right
 				eulerAngleTarget = Quaternion.Euler(rigidbody.rotation.eulerAngles + new Vector3(0f,90f,0f)).eulerAngles ;
-				Debug.Log("turn right "+eulerAngleTarget) ;
+				//Debug.Log("turn right "+eulerAngleTarget) ;
 			}
 
 			isTurning = true ;
@@ -157,7 +180,7 @@ public class MigeonBehavior : MonoBehaviour {
 	}
 
 	void createBlock(){
-		Debug.Log("create block") ;
+		//Debug.Log("create block") ;
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		cube.transform.position = transform.forward*2 + rigidbody.position ;
 	}
