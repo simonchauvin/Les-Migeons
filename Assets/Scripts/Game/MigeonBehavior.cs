@@ -228,7 +228,7 @@ public class MigeonBehavior : MonoBehaviour {
 		return false ;
 	}
 
-	bool jump(){
+	public bool jump(){
 		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
@@ -295,5 +295,4 @@ public class MigeonBehavior : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
 		gameObject.layer = oldLayer;
 	}
-	
 }
