@@ -36,15 +36,14 @@ public class MigeonBehavior : MonoBehaviour {
 		carried = false ;
 	}
 	
-	void Update(){
-	}
+	
 
 	// Update is called once per frame
-	void FixedUpdate() {
+	void Update() {
 		if (carried){
-			rigidbody.Sleep();
-			transform.position = player.position + transform.forward * 2f;
-			transform.forward = Camera.main.transform.forward;
+			rigidbody.isKinematic = true;
+            transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+            transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); ;
 			wasCarried = true ;
 			
 			jobToDo = false ;
@@ -53,6 +52,7 @@ public class MigeonBehavior : MonoBehaviour {
 			isTurning = false ;
 			isGoingForward = false ;
 		}else if(wasCarried == true && carried == false){
+            rigidbody.isKinematic = false;
 			snapToFloor() ;
 			rigidbody.WakeUp();
 			wasCarried = false ;
