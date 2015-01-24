@@ -7,6 +7,7 @@ public class MigeonBehavior : MonoBehaviour {
 	private Transform player;
 
 	protected int[] actionsList ;
+	protected Genetics.GeneticCode code ;
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
@@ -23,26 +24,20 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isGoingForward = false ;
 	protected bool isTurning = false ;
 	protected bool isJumping = false ;
+	protected bool isFalling = false ;
 	
 	public bool carried { get; set; }
 	protected bool wasCarried = false ;
 	
 	// Use this for initialization
 	void Start () {
+		code = Genetics.makeGeneticCode() ;
+		//code.actions[] ;
 		player = GameObject.Find("Player").transform;
 
 		carried = false ;
-		//maxActions = Random.Range (5, 10);
-		maxActions = 5 ;
-		actionsList = new int[maxActions+1];
-		//actionsList = getBaseActions(Random.Range (1, 4)) ;
-		actionsList = getBaseActions(2) ;
-		//actionsList[0] = Random.Range (2, 5);
-		//actionsList[0] = 3 ;
-		/*for (int i = 1; i <= maxActions; i++) {
-			actionsList[i] = Random.Range(0,5) ;
-			//actionsList[i] = 1 ;
-		}*/
+
+		//maxActions = 5 ;
 	}
 	
 	int[] getBaseActions(int idBase){
@@ -96,6 +91,11 @@ public class MigeonBehavior : MonoBehaviour {
 			transform.position = player.position + transform.forward * 2f;
 			transform.forward = Camera.main.transform.forward;
 			wasCarried = true ;
+			
+			isJumping = false ;
+			isFalling = false ;
+			isTurning = false ;
+			isGoingForward = false ;
 		}
 		else if(wasCarried == true && carried == false)
 		{
@@ -109,45 +109,43 @@ public class MigeonBehavior : MonoBehaviour {
 	}
 
 	void startJob(){
-		stepAction = 1 ;
+		stepAction = 0 ;
 		repeatAction = 0 ;
 		jobToDo = true ;
 	}
 
 	void doYourJob(){
 		
-		switch(actionsList[stepAction]){
-			case 0 :
+		switch(code.actions[stepAction]){
+			case Genetics.MIGEON_ACTION.AVANCER :
 				goForward() ;
 			break;
-			case 1 : case 2 :
-				turn(actionsList [stepAction]) ;
+			case Genetics.MIGEON_ACTION.TURN_LEFT :
+				turn (1) ;
+				break ;
+			case Genetics.MIGEON_ACTION.TURN_RIGHT :
+				turn(2) ;
 				break;
-			case 3 :
+			case Genetics.MIGEON_ACTION.JUMP :
 				jump() ;
-				//Debug.Log("jump") ;
 				break;
-			case 4 :
+			case Genetics.MIGEON_ACTION.PUT_CUBE :
 				createBlock() ;
-				stepAction++ ;
 				break;
 		}
-		if(stepAction > maxActions){
-			stepAction = 1 ;
+		if(stepAction >= code.actions.Length-1){
+			stepAction = 0 ;
 			repeatAction++ ;
-			//Debug.Log("repeat") ;
-			if(repeatAction >= actionsList[0]){
-				//Debug.Log("endJob") ;
+			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
 		}
 	}
 	
 	bool canIGo(Vector3 direction, float distance){
-		if(Physics.Raycast(rigidbody.transform.position, direction, distance)){
+		if(Physics.Raycast(rigidbody.transform.position+direction, direction, distance)){
 			RaycastHit hit;
-			Physics.Raycast(rigidbody.transform.position, direction, out hit, distance) ;
-			Debug.Log(hit.point +" "+hit.collider.gameObject.name);
+			Physics.Raycast(rigidbody.transform.position+direction, direction, out hit, distance) ;
 			return false ;
 		}
 		return true ;
@@ -169,17 +167,28 @@ public class MigeonBehavior : MonoBehaviour {
 			stepAction++ ;
 			Debug.Log ("cant move, skip") ;
 			return ;
+		}else{
+			rigidbody.AddForce(dir*2f,ForceMode.Impulse) ;
 		}
 		
-		Vector3 step = dir*moveDistance*speed ;
-		// Move our position a step closer to the target.
-		rigidbody.MovePosition(rigidbody.transform.position + (step*Time.deltaTime));
-		snapToFloor() ;
-		//ignore Y for distance
-		Vector3 ignoreYpos = new Vector3(rigidbody.transform.position.x,0.0f,rigidbody.transform.position.z) ;
-		Vector3 ignoreYtarget = new Vector3(target.x,0.0f,target.z) ;
-		if(Vector3.Distance(ignoreYpos, ignoreYtarget) <= .5f){
+		RaycastHit hit;
+		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
+		/*TODO GENERALIZE*/
+		if(!isFalling && hit.distance >= 1f){
+			isFalling = true ;
+		}else if(isFalling && rigidbody.velocity.y < 0.1f && hit.distance <= 1f){
+			snapToFloor() ;
+			isFalling = false ;
+		}else if(isFalling){
+			rigidbody.AddForce(-Vector3.up*2f,ForceMode.Impulse) ;
+		}
+
+		if(Vector3.Distance(rigidbody.transform.position, target) <= .2f){
+			rigidbody.MovePosition(target) ;
+			snapToFloor() ;
+			isFalling = false ;
 			isGoingForward = false ;
+			rigidbody.velocity = new Vector3(0f,0f,0f) ;
 			stepAction++ ;
 		}
 	}
@@ -199,10 +208,10 @@ public class MigeonBehavior : MonoBehaviour {
 			isTurning = true ;
 		}
 		
-			float step = speedRotation * Time.deltaTime *100f ;
-			Quaternion deltaRotation = Quaternion.Euler(eulerAngleTarget * step);
-			//rigidbody.MoveRotation(rigidbody.rotation * deltaRotation) ;
-			rigidbody.MoveRotation(Quaternion.RotateTowards(rigidbody.rotation, Quaternion.Euler(eulerAngleTarget), step)) ;
+		float step = speedRotation * Time.deltaTime *100f ;
+		Quaternion deltaRotation = Quaternion.Euler(eulerAngleTarget * step);
+
+		rigidbody.MoveRotation(Quaternion.RotateTowards(rigidbody.rotation, Quaternion.Euler(eulerAngleTarget), step)) ;
 		if(Vector3.Distance(rigidbody.rotation.eulerAngles, eulerAngleTarget) <= 0.2f){
 			rigidbody.MoveRotation(Quaternion.Euler(eulerAngleTarget)) ;
 			isTurning = false ;
@@ -212,52 +221,73 @@ public class MigeonBehavior : MonoBehaviour {
 
 	void jump(){
 		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
-			Debug.DrawLine(rigidbody.transform.position,rigidbody.transform.position + (transform.forward*1.5f + transform.up));
+			Debug.DrawLine(rigidbody.transform.position,rigidbody.transform.position + (transform.forward*1f + transform.up));
 			if(!isJumping){
-				targetJump = rigidbody.transform.position + (transform.forward*1.5f + transform.up) ;
-				//rigidbody.MovePosition();
-				Debug.Log ("jump") ;
-				isJumping = true ;
-				
-				rigidbody.AddForce((transform.forward*2f + transform.up)*22f,ForceMode.Impulse) ;
+				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
+				isJumping = true ;;
+				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
 			}
-			//if(Vector3.Distance(rigidbody.transform.position,target) <= 0.3f){
-			if(rigidbody.velocity.magnitude <= 0.2f){
-				rigidbody.MovePosition(targetJump) ;
-				isJumping = false ;
-				stepAction++ ;
-				snapToFloor() ;
+		}
+		
+		if(isJumping){		
+			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
+				rigidbody.AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
+			}else if(targetJump.y - rigidbody.transform.position.y >= -1.0f){
+				rigidbody.AddForce((transform.forward)*1f,ForceMode.Impulse) ;
+				isFalling = true ;
 			}
-		}else{
-			Debug.Log ("cant jump") ;
+		}
+		RaycastHit hit;
+		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
+
+		if(isFalling && rigidbody.velocity.y <= 0.1f && hit.distance <= 1f){
+			rigidbody.MovePosition(new Vector3(targetJump.x, rigidbody.transform.position.y, targetJump.z)) ;
+			snapToFloor() ;
+			isJumping = false ;
+			isFalling = false ;
+			rigidbody.velocity = new Vector3(0f,0f,0f) ;
+			stepAction++ ;
+		}else if(isFalling){
+			rigidbody.AddForce(-Vector3.up*1.5f,ForceMode.Impulse) ;
 		}
 	}
 
 	void createBlock(){
-		//Debug.Log("create block") ;
-		float distance = 2 ;
-		Debug.Log(rigidbody.transform.position) ;
+		float distance = 1 ;
 		if(canIGo(rigidbody.transform.forward, distance+0.1f)){
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.transform.position = rigidbody.position + transform.forward*distance - new Vector3(0.0f,distToFloor/2f,0.0f) ;
-			Debug.Log("create block") ;
-		}else{
-			Debug.Log("no block") ;
-			//peut pas poser
+			Vector3 newPos = rigidbody.position + transform.forward*distance ;
+			newPos.x = Mathf.Round(newPos.x) ;
+			newPos.y = Mathf.Round(newPos.y)-distToFloor/2f ;
+			newPos.z = Mathf.Round(newPos.z) ;
+			cube.transform.position = newPos ;
 		}
+		stepAction++ ;
 	}
 	
 	void snapToFloor(){
+		// Save current object layer
+		int oldLayer = gameObject.layer;
+		
+		//Change object layer to a layer it will be alone
+		gameObject.layer = LayerMask.NameToLayer("Ghost");
+		
+		int layerToIgnore = 1 << gameObject.layer;
+		layerToIgnore = ~layerToIgnore;
+
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, -Vector3.up, out hit)){
+		if (Physics.Raycast(transform.position, -Vector3.up, out hit,0.5f,layerToIgnore)){
 			if(Vector3.Distance(transform.position,hit.point+new Vector3(0.0f,distToFloor,0.0f))>=0.4f){
-				transform.position = hit.point+new Vector3(0.0f,distToFloor,0.0f) ;
+				Debug.Log ("snap :"+hit.collider.gameObject.name) ;
+				transform.position = new Vector3(Mathf.Round(hit.point.x), Mathf.Round(hit.point.y), Mathf.Round(hit.point.z))+new Vector3(0.0f,distToFloor,0.0f) ;
 			}
 			float newY = Mathf.Round(transform.rotation.eulerAngles.y / 45.0f) * 45.0f ;
 			//Debug.Log (transform.rotation.eulerAngles.y+" "+newY) ;
 			transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
 			//transform.position = transform.position ;
 		}
+		// set the game object back to its original layer
+		gameObject.layer = oldLayer;
 	}
 	
 }
