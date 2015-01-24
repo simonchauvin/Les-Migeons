@@ -24,8 +24,14 @@ public class PlayerController : MonoBehaviour {
 			bool isCarried = hit.collider.GetComponent<MigeonBehavior>().carried;
 			if (isCarried)
 			{
-				grabMigeonLabel.SetActive(false);
-				releaseMigeonLabel.SetActive(true);
+				if (grabMigeonLabel != null)
+				{
+					grabMigeonLabel.SetActive(false);
+				}
+				if (releaseMigeonLabel != null)
+				{
+					releaseMigeonLabel.SetActive(true);
+				}
 				if (Input.GetKeyDown(KeyCode.E))
 				{
 					hit.collider.GetComponent<MigeonBehavior>().carried = false;
@@ -33,8 +39,14 @@ public class PlayerController : MonoBehaviour {
 			}
 			else
 			{
-				grabMigeonLabel.SetActive(true);
-				releaseMigeonLabel.SetActive(false);
+				if (grabMigeonLabel != null)
+				{
+					grabMigeonLabel.SetActive(true);
+				}
+				if (releaseMigeonLabel != null)
+				{
+					releaseMigeonLabel.SetActive(false);
+				}
 				if (Input.GetKeyDown(KeyCode.E))
 				{
 					hit.collider.GetComponent<MigeonBehavior>().carried = true;
@@ -43,8 +55,14 @@ public class PlayerController : MonoBehaviour {
 		}
 		else
 		{
-			grabMigeonLabel.SetActive(false);
-			releaseMigeonLabel.SetActive(false);
+			if (grabMigeonLabel != null)
+			{
+				grabMigeonLabel.SetActive(false);
+			}
+			if (releaseMigeonLabel != null)
+			{
+				releaseMigeonLabel.SetActive(false);
+			}
 		}
 	}
 }
