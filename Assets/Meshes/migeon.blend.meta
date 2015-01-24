@@ -9,18 +9,18 @@ ModelImporter:
     100006: LeftArm
     100008: LeftLeg
     100010: Migeon
-    100012: RightArm
-    100014: RightLeg
-    100016: //RootNode
+    100012: //RootNode
+    100014: RightArm
+    100016: RightLeg
     400000: Armature
     400002: Chest
     400004: Head
     400006: LeftArm
     400008: LeftLeg
     400010: Migeon
-    400012: RightArm
-    400014: RightLeg
-    400016: //RootNode
+    400012: //RootNode
+    400014: RightArm
+    400016: RightLeg
     4300000: Migeon
     7400000: Default Take
     7400002: Walk
