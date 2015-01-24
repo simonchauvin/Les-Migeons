@@ -47,8 +47,12 @@ public class MigeonBehavior : MonoBehaviour {
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
 		parentCube = GameObject.Find("cubes") ;
-		myBlaze = new Color(Random.value,Random.value,Random.value,0.5f) ;
-		renderer.material.color = myBlaze ;
+		if(isSlave){
+			myBlaze = new Color(Random.Range(0f,0.5f),Random.value,Random.Range(0.6f,1f),0.5f) ;
+		}else{
+			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
+		}
+		transform.FindChild("migeon").renderer.material.color = myBlaze ;
 	}
 
     public void takeControl(bool take)
