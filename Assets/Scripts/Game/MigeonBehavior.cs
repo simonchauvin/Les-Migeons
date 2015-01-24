@@ -26,6 +26,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isTurning = false ;
 	protected bool isJumping = false ;
 	protected bool isFalling = false ;
+	protected bool wait = false ;
 	
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
@@ -66,6 +67,7 @@ public class MigeonBehavior : MonoBehaviour {
             isFalling = false;
             isTurning = false;
             isGoingForward = false;
+            wait = false ;
         }
         else if (wasCarried == true)
         {
@@ -78,7 +80,17 @@ public class MigeonBehavior : MonoBehaviour {
 	void Update(){
 
 	}
-
+	
+	void nextStep() {
+		wait = true ;
+		Invoke ("validStep",1.0f) ;
+	}
+	
+	void validStep(){
+		stepAction++ ;
+		wait = false ;
+	}
+	
 	// Update is called once per frame
 	void FixedUpdate() {
         if (carried)
@@ -92,7 +104,7 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 	
 		if(!carried && !wasCarried){
-			if(jobToDo){
+			if(jobToDo && !wait){
 				doYourJob() ;
 			}else{
 				if(transform.position.y > distToFloor || isJumping){
@@ -132,27 +144,28 @@ public class MigeonBehavior : MonoBehaviour {
 		switch(code.actions[stepAction]){
 			case Genetics.MIGEON_ACTION.AVANCER :
 				if(goForward(autoMoveDistance)){
-					stepAction++ ;
+					 
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.TURN_LEFT :
 				if(turn (1)) {
-					stepAction++ ;
+					nextStep() ;
 				}
 				break ;
 			case Genetics.MIGEON_ACTION.TURN_RIGHT :
 				if(turn (2)) {
-					stepAction++ ;
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.JUMP :
 				if(jump ()) {
-					stepAction++ ;
+					nextStep() ;
 				}
 			break;
 			case Genetics.MIGEON_ACTION.PUT_CUBE :
 				if(createBlock()) {
-					stepAction++ ;
+					nextStep() ;
 				}
 				break;
 		}
@@ -237,7 +250,7 @@ public class MigeonBehavior : MonoBehaviour {
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
-				rigidbody.AddForce((transform.up)*55f,ForceMode.Impulse) ;
+				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
 			}
 		}
 		
@@ -268,7 +281,7 @@ public class MigeonBehavior : MonoBehaviour {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			Vector3 newPos = rigidbody.position + transform.forward*distance ;
 			newPos.x = Mathf.Round(newPos.x) ;
-			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor)*2)/2 ;
+			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor))+0.5f ;
 			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
