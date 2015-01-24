@@ -7,13 +7,17 @@ public class MigeonGenerator : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		parentMigeon = GameObject.Find("migeons") ;
-		for(int i = 0 ; i <= 50 ; i++){
-			spawnMigeon () ;
+		for(int i = 0 ; i <= 60 ; i++){
+			if(i<5){
+				spawnMigeon (true) ;
+			}else{
+				spawnMigeon (false) ;
+			}
 		}
 	}
 	
-	void spawnMigeon(){
-		Vector3 position = Random.insideUnitSphere * 50 ;
+	void spawnMigeon(bool slave){
+		Vector3 position = Random.insideUnitSphere * 100 ;
 		position.x = Mathf.Round (position.x) ;
 		position.y = 1.0f ;
 		position.z = Mathf.Round (position.z) ;
@@ -27,6 +31,7 @@ public class MigeonGenerator : MonoBehaviour {
 		Quaternion rotation = Quaternion.Euler(0.0f,yRot,0.0f) ;
 		Rigidbody migeon1 = (Rigidbody) Instantiate(migeon, position, rotation);
 		migeon1.gameObject.transform.parent = parentMigeon.transform ;
+		migeon1.GetComponent<MigeonBehavior>().isSlave = slave ;
 	}
 	
 	// Update is called once per frame
