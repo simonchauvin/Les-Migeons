@@ -11,7 +11,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
-	protected float distToFloor = 0.35f ;
+	protected float distToFloor = 0.6f ;
 
 	protected float autoMoveDistance = 5.0f ;
 	protected float speed = 1f ;
@@ -206,7 +206,7 @@ public class MigeonBehavior : MonoBehaviour {
 			isGoingForward = false ;
 			return true ;
 		}else{
-			rigidbody.AddForce(dir*2f,ForceMode.Impulse) ;
+			rigidbody.AddForce(dir*5f,ForceMode.Impulse) ;
 		}
 
 		if(Vector3.Distance(rigidbody.transform.position, target) <= .2f){

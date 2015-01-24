@@ -66,8 +66,8 @@ public class GameManager : MonoBehaviour
 		menuPosition = new Vector2(Screen.width / 2 - menuSize.x / 2, Screen.height / 2 - menuSize.y / 2);
 		paused = false;
 		wasLocked = false;
-		Screen.lockCursor = lockCursor;
-		Screen.showCursor = showCursor;
+		//Screen.lockCursor = lockCursor;
+		//Screen.showCursor = showCursor;
 	}
 	
 	// Update is called once per frame
