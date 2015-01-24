@@ -35,13 +35,15 @@ public class MigeonBehavior : MonoBehaviour {
 		player = GameObject.Find("Player").transform;
 		carried = false ;
 	}
+
+
 	
 	
 
 	// Update is called once per frame
 	void Update() {
 		if (carried){
-			rigidbody.isKinematic = true;
+			
             transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
             transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); ;
 			wasCarried = true ;

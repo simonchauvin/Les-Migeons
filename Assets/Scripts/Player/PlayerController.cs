@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	private GameObject releaseMigeonLabel;
 
     Transform carriedMigeon = null;
+    Transform migeonItWantsToFuck = null;
  
 	// Use this for initialization
 	void Start ()
@@ -63,6 +64,14 @@ public class PlayerController : MonoBehaviour {
         }
         else
 		{
+            //On porte un migeon
+            RaycastHit hit;
+            if (Physics.Raycast(carriedMigeon.transform.position, carriedMigeon.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
+                migeonItWantsToFuck = hit.transform;
+            else
+                migeonItWantsToFuck = null;
+
+
 			if (grabMigeonLabel != null)
 				grabMigeonLabel.SetActive(false);
 			
