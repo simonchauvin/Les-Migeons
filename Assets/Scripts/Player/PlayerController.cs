@@ -66,10 +66,9 @@ public class PlayerController : MonoBehaviour {
         else
 		{
             //On porte un migeon
-            carriedMigeon.transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.up); 
+            carriedMigeon.transform.LookAt(carriedMigeon.transform.position + transform.forward, Vector3.up); 
             carriedMigeon.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
             
-             
             RaycastHit hit;
             if (Physics.Raycast(carriedMigeon.transform.position, carriedMigeon.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
                 migeonItWantsToFuck = hit.transform;

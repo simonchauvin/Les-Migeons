@@ -71,7 +71,7 @@ public class MigeonBehavior : MonoBehaviour {
         if (carried)
             return;
 
-		/*playerPos = MyMaster.transform.position ;
+		playerPos = MyMaster.transform.position ;
 		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
 			inPlayerVicinity = true ;
 		}else{
@@ -110,7 +110,7 @@ public class MigeonBehavior : MonoBehaviour {
 			isFalling = false ;
 		}else if(isFalling){
 			rigidbody.AddForce(-Vector3.up*2f,ForceMode.Impulse) ;
-		}*/
+		}
 	}
 
 	void startJob(){
