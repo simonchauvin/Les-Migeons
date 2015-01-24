@@ -1,0 +1,202 @@
+fileFormatVersion: 2
+guid: db8439948a4827e4193abbecd22e4ebb
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Armature
+    100004: Armature_001
+    100006: Bone
+    100008: Bone_0
+    100010: Cube
+    100012: Cube_001
+    100014: Cube_002
+    100016: Cube_003
+    100018: Bone_001
+    100020: Bone_004
+    100022: Bone_002
+    100024: Bone_003
+    100026: Armature_002
+    100028: Chest
+    100030: Head
+    100032: LeftArm
+    100034: LeftLeg
+    100036: RightArm
+    100038: RightLeg
+    100040: Migeon
+    400000: //RootNode
+    400002: Armature
+    400004: Armature_001
+    400006: Bone
+    400008: Bone_0
+    400010: Cube
+    400012: Cube_001
+    400014: Cube_002
+    400016: Cube_003
+    400018: Bone_001
+    400020: Bone_004
+    400022: Bone_002
+    400024: Bone_003
+    400026: Armature_002
+    400028: Chest
+    400030: Head
+    400032: LeftArm
+    400034: LeftLeg
+    400036: RightArm
+    400038: RightLeg
+    400040: Migeon
+    2300000: //RootNode
+    2300002: Cube
+    2300004: Cube_001
+    2300006: Cube_003
+    3300000: //RootNode
+    3300002: Cube
+    3300004: Cube_001
+    3300006: Cube_003
+    4300000: Cube
+    4300002: Cube_002
+    4300004: Cube_003
+    4300006: Cube_001
+    4300008: Migeon
+    7400000: Default Take
+    7400002: ArmatureAction
+    7400004: ArmatureAction_002
+    9500000: //RootNode
+    13700000: Cube_002
+    13700002: Cube
+    13700004: Cube_003
+    13700006: Migeon
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Default Take
+      takeName: Default Take
+      firstFrame: 14
+      lastFrame: 74
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Chest
+        weight: 1
+      - path: Armature/Chest/Head
+        weight: 1
+      - path: Armature/Chest/LeftLeg
+        weight: 1
+      - path: Armature/Chest/RightLeg
+        weight: 1
+      - path: Migeon
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: ArmatureAction_002
+      takeName: ArmatureAction_002
+      firstFrame: 14
+      lastFrame: 74
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Chest
+        weight: 1
+      - path: Armature/Chest/Head
+        weight: 1
+      - path: Armature/Chest/LeftLeg
+        weight: 1
+      - path: Armature/Chest/RightLeg
+        weight: 1
+      - path: Migeon
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .200000003
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: Chest
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
