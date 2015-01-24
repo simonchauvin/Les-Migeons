@@ -222,7 +222,7 @@ public class MigeonBehavior : MonoBehaviour {
 				rigidbody.AddForce((transform.forward*2f + transform.up)*22f,ForceMode.Impulse) ;
 			}
 			//if(Vector3.Distance(rigidbody.transform.position,target) <= 0.3f){
-			dif(rigidbody.velocity.magnitude <= 0.2f){
+			if(rigidbody.velocity.magnitude <= 0.2f){
 				rigidbody.MovePosition(targetJump) ;
 				isJumping = false ;
 				stepAction++ ;
