@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour {
 	void Update ()
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f, LayerMask.GetMask("Migeon")))
+		if (Physics.Raycast(transform.position, Camera.main.transform.forward, out hit, 2f, LayerMask.GetMask("Migeon")))
 		{
 			bool isCarried = hit.collider.GetComponent<MigeonBehavior>().carried;
 			if (isCarried)
