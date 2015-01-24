@@ -28,11 +28,16 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isFalling = false ;
 	
 	protected bool inPlayerVicinity = false ;
+	public bool isSlave = false ;
 	
 	protected GameObject MyMaster ;
 	
 	public bool carried { get; set; }
 	protected bool wasCarried = false ;
+	
+	protected GameObject parentCube ;
+	
+	protected Color myBlaze ;
 	
 	// Use this for initialization
 	void Start () {
@@ -40,6 +45,9 @@ public class MigeonBehavior : MonoBehaviour {
 		player = GameObject.Find("Player").transform;
 		carried = false ;
 		MyMaster = GameObject.Find("Player") ;
+		parentCube = GameObject.Find("cubes") ;
+		myBlaze = new Color(Random.value,Random.value,Random.value,0.5f) ;
+		renderer.material.color = myBlaze ;
 	}
 
     public void takeControl(bool take)
@@ -82,21 +90,16 @@ public class MigeonBehavior : MonoBehaviour {
 			if(jobToDo){
 				doYourJob() ;
 			}else{
-				if(transform.position.y > distToFloor && !isJumping){
-					Debug.Log("going on ground") ;
-				}
 				if(transform.position.y > distToFloor || isJumping){
 					if(jump()){
 						turn (1) ;
 					}
 				}
 				
-				
-				
-				//if(!isGoingForward && !inPlayerVicinity){
-				//	Debug.Log("going to my master") ;
-				//	goForward(5.0f, playerPos) ;
-				//}
+				if(isSlave && !isGoingForward && !inPlayerVicinity){
+					Debug.Log("going to my master") ;
+					goForward(5.0f, playerPos) ;
+				}
 				
 			}
 		}
@@ -151,9 +154,8 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length-1){
 			stepAction = 0 ;
 			repeatAction++ ;
-			if(repeatAction >= code.nbRepeat){
+			if(repeatAction >= code.nbRepeat && !isSlave){
 				jobToDo = false ;
-				Debug.Log("job finished") ;
 			}
 		}
 	}
@@ -188,19 +190,6 @@ public class MigeonBehavior : MonoBehaviour {
 		}else{
 			rigidbody.AddForce(dir*2f,ForceMode.Impulse) ;
 		}
-		
-		/*TODO GENERALIZE*/
-		/*
-		RaycastHit hit;
-		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
-		if(!isFalling && hit.distance >= 1f){
-			isFalling = true ;
-		}else if(isFalling && rigidbody.velocity.y < 0.1f && hit.distance <= 1f){
-			snapToFloor() ;
-			isFalling = false ;
-		}else if(isFalling){
-			rigidbody.AddForce(-Vector3.up*2f,ForceMode.Impulse) ;
-		}*/
 
 		if(Vector3.Distance(rigidbody.transform.position, target) <= .2f){
 			rigidbody.MovePosition(target) ;
@@ -240,7 +229,6 @@ public class MigeonBehavior : MonoBehaviour {
 
 	bool jump(){
 		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
-			//Debug.DrawLine(rigidbody.transform.position,rigidbody.transform.position + (transform.forward*1f + transform.up));
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
@@ -267,21 +255,6 @@ public class MigeonBehavior : MonoBehaviour {
 			return true ;
 		}
 		return false ;
-		/*
-		RaycastHit hit;
-		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
-
-		if(isFalling && rigidbody.velocity.y <= 0.1f && hit.distance <= 1f){
-			rigidbody.MovePosition(new Vector3(targetJump.x, rigidbody.transform.position.y, targetJump.z)) ;
-			snapToFloor() ;
-			isJumping = false ;
-			isFalling = false ;
-			rigidbody.velocity = new Vector3(0f,0f,0f) ;
-			stepAction++ ;
-		}else if(isFalling){
-			rigidbody.AddForce(-Vector3.up*1.5f,ForceMode.Impulse) ;
-		}
-		*/
 	}
 
 	bool createBlock(){
@@ -293,6 +266,8 @@ public class MigeonBehavior : MonoBehaviour {
 			newPos.y = Mathf.Round(newPos.y)-distToFloor/2f ;
 			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
+			cube.transform.parent = parentCube.transform ;
+			cube.renderer.material.color = myBlaze ;
 		}
 		return true ;
 	}
