@@ -11,7 +11,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int maxActions ;
 	protected int stepAction = 1 ;
 	protected int repeatAction = 0 ;
-	protected float distToFloor = 1.0f ;
+	protected float distToFloor = 0.35f ;
 
 	protected float autoMoveDistance = 5.0f ;
 	protected float speed = 1f ;
@@ -52,7 +52,7 @@ public class MigeonBehavior : MonoBehaviour {
 		}else{
 			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
 		}
-		transform.FindChild("migeon").renderer.material.color = myBlaze ;
+		//transform.FindChild("Migeon").transform.renderer.material.color = myBlaze ;
 	}
 
     public void takeControl(bool take)
@@ -237,7 +237,7 @@ public class MigeonBehavior : MonoBehaviour {
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
-				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
+				rigidbody.AddForce((transform.up)*55f,ForceMode.Impulse) ;
 			}
 		}
 		
@@ -245,7 +245,7 @@ public class MigeonBehavior : MonoBehaviour {
 			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
 				rigidbody.AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
 			}else if(targetJump.y - rigidbody.transform.position.y >= -1.0f){
-				rigidbody.AddForce((transform.forward)*1f,ForceMode.Impulse) ;
+				rigidbody.AddForce((transform.forward)*1.2f,ForceMode.Impulse) ;
 				isFalling = true ;
 			}
 		}
@@ -268,7 +268,7 @@ public class MigeonBehavior : MonoBehaviour {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			Vector3 newPos = rigidbody.position + transform.forward*distance ;
 			newPos.x = Mathf.Round(newPos.x) ;
-			newPos.y = Mathf.Round(newPos.y)-distToFloor/2f ;
+			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor)*2)/2 ;
 			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
