@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof (Rigidbody))]
 public class MigeonBehavior : MonoBehaviour {
+
+	private Transform player;
 
 	protected int[] actionsList ;
 	protected int maxActions ;
@@ -22,6 +25,8 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		player = GameObject.Find("Player").transform;
+
 		carried = false ;
 		//maxActions = Random.Range (5, 10);
 		maxActions = 5 ;
@@ -75,10 +80,22 @@ public class MigeonBehavior : MonoBehaviour {
 			isTurning = false ;
 		}
 	}
+
 	// Update is called once per frame
 	void FixedUpdate() {
 		if(jobToDo){
 			doYourJob() ;
+		}
+
+		if (carried)
+		{
+			rigidbody.Sleep();
+			transform.position = player.position + transform.forward * 2f;
+			transform.forward = Camera.main.transform.forward;
+		}
+		else
+		{
+			rigidbody.WakeUp();
 		}
 	}
 
