@@ -123,13 +123,15 @@ public class MigeonBehavior : MonoBehaviour {
 		if(jobToDo && !waitForPlayer){
 			doYourJob();
 		}else{
-			if(transform.position.y > distToFloor+0.2f || isJumping){
-				if(jump()){
+			if(transform.position.y > distToFloor+0.2f || isJumping || isTurning){
+                if (isTurning){
+                    turn (1) ;
+                }else if(jump()){
 					turn (1) ;
 				}
             }else{
                 waitForPlayer = true;
-                isGoingForward = false;
+
                 if (!audio.isPlaying) { 
                     audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
                     audio.PlayDelayed(Random.Range(5f, 10f));
@@ -205,7 +207,6 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
-            repeatAction += 12;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
