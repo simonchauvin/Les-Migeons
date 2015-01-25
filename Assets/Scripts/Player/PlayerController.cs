@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 
 	private GameObject grabMigeonLabel;
 	private GameObject releaseMigeonLabel;
+    private GameObject mateMigeonLabel;
 
     Transform carriedMigeon = null;
     Transform migeonItWantsToFuck = null;
@@ -16,13 +17,29 @@ public class PlayerController : MonoBehaviour {
 	{
 		grabMigeonLabel = GameObject.Find("GrabMigeonLabel");
 		releaseMigeonLabel = GameObject.Find("ReleaseMigeonLabel");
+        mateMigeonLabel = GameObject.Find("MateMigeonLabel");
 
+        setLabel(MESSAGE.NONE);
+	}
+
+    private enum MESSAGE{
+        NONE = 0,
+        TAKE,
+        RELEASE,
+        MATE
+    }
+
+    void setLabel(MESSAGE mess)
+    {
         if (grabMigeonLabel != null)
-            grabMigeonLabel.SetActive(false);
+            grabMigeonLabel.SetActive(mess == MESSAGE.TAKE);
 
         if (releaseMigeonLabel != null)
-            releaseMigeonLabel.SetActive(false);
-	}
+            releaseMigeonLabel.SetActive(mess == MESSAGE.RELEASE);
+
+        if (mateMigeonLabel != null)
+            mateMigeonLabel.SetActive(mess == MESSAGE.MATE);
+    }
 	
 	// Update is called once per frame
 	void LateUpdate ()
@@ -42,11 +59,7 @@ public class PlayerController : MonoBehaviour {
 
             if (found)
             {
-                if (grabMigeonLabel != null)
-                    grabMigeonLabel.SetActive(true);
-
-                if (releaseMigeonLabel != null)
-                    releaseMigeonLabel.SetActive(false);
+                setLabel(MESSAGE.TAKE);
 
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -57,11 +70,7 @@ public class PlayerController : MonoBehaviour {
             }
             else
             {
-                if (grabMigeonLabel != null)
-                    grabMigeonLabel.SetActive(false);
-
-                if (releaseMigeonLabel != null)
-                    releaseMigeonLabel.SetActive(false);
+                setLabel(MESSAGE.NONE);
             }
         }
         else
@@ -84,6 +93,12 @@ public class PlayerController : MonoBehaviour {
             }
 
             if (migeonItWantsToFuck != null)
+                setLabel(MESSAGE.MATE);
+            else
+                if(carriedMigeon)
+                    setLabel(MESSAGE.RELEASE);
+
+            if (migeonItWantsToFuck != null)
             {
                 Vector3 directionMigeon = migeonItWantsToFuck.position - carriedMigeon.position;
                 timeWantToFuck += Time.deltaTime;
@@ -104,13 +119,6 @@ public class PlayerController : MonoBehaviour {
                     carriedMigeon.transform.LookAt(carriedMigeon.transform.position + directionMigeon, Vector3.up); 
                 } 
             }
-
-
-			if (grabMigeonLabel != null)
-				grabMigeonLabel.SetActive(false);
-			
-			if (releaseMigeonLabel != null)
-				releaseMigeonLabel.SetActive(true);
 
             bool releaseMigeon = false;
 
@@ -152,14 +160,11 @@ public class PlayerController : MonoBehaviour {
             {
                 carriedMigeon.rigidbody.isKinematic = false;
                 carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
+                carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = false;
                 carriedMigeon = null;
                 migeonItWantsToFuck = null;
-                carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = false;
-                if (grabMigeonLabel != null)
-                    grabMigeonLabel.SetActive(false);
 
-                if (releaseMigeonLabel != null)
-                    releaseMigeonLabel.SetActive(false);
+                setLabel(MESSAGE.NONE);
             }
 		}
 	}
