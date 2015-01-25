@@ -6,14 +6,12 @@ public class MigeonBehavior : MonoBehaviour {
 
 	private Transform player;
 
-	protected int[] actionsList ;
 	public Genetics.GeneticCode code { get; set; }
-	protected int maxActions ;
-	protected int stepAction = 1 ;
+	protected int stepAction = 0 ;
 	protected int repeatAction = 0 ;
-	protected float distToFloor = 0.6f ;
+	protected float distToFloor = 0;
 
-	protected float autoMoveDistance = 5.0f ;
+	protected float autoMoveDistance = 1.0f ;
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
 	protected bool jobToDo = true ;
@@ -31,8 +29,6 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
 	
-	protected GameObject MyMaster ;
-	
 	public bool carried { get; set; }
 	protected bool wasCarried = false ;
 	
@@ -42,18 +38,24 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-        if(code == null) //si pas deja set par un instantiate
-		    code = Genetics.makeGeneticCode() ;
-		player = GameObject.Find("Player").transform;
+
+        wait = true;
+        Invoke("endWait", 3.0f);
+
+        if (code == null) //si pas deja set par un instantiate
+            code = Genetics.makeGeneticCode();
+
+        distToFloor = rigidbody.collider.bounds.size.y / 2f;
+        player = GameObject.Find("Player").transform;
 		carried = false ;
-		MyMaster = GameObject.Find("Player") ;
 		parentCube = GameObject.Find("cubes") ;
 		if(isSlave){
 			myBlaze = new Color(Random.Range(0f,0.5f),Random.value,Random.Range(0.6f,1f),0.5f) ;
 		}else{
 			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
 		}
-		//transform.FindChild("Migeon").transform.renderer.material.color = myBlaze ;
+
+        transform.GetChild(0).GetChild(1).renderer.material.color = myBlaze;
 	}
 
     public void takeControl(bool take)
@@ -71,55 +73,55 @@ public class MigeonBehavior : MonoBehaviour {
         }
         else if (wasCarried == true)
         {
+            wait = true;
+            Invoke("endWait", 3.0f);
             wasCarried = false;
             snapToFloor();     
             startJob();
         }
     }
 	
-	void Update(){
 
-	}
 	
 	void nextStep() {
 		wait = true ;
-		Invoke ("validStep",1.0f) ;
+        stepAction++;
+        Invoke("endWait", 0.5f);
 	}
 	
-	void validStep(){
-		stepAction++ ;
+	void endWait(){
 		wait = false ;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate() {
-        if (carried)
+        if (carried || wait)
             return;
 
-		playerPos = MyMaster.transform.position ;
+		/*playerPos = player.transform.position ;
 		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
 			inPlayerVicinity = true ;
 		}else{
 			inPlayerVicinity = false ;
-		}
+		}*/
 	
-		if(!carried && !wasCarried){
-			if(jobToDo && !wait){
-				doYourJob() ;
-			}else{
-				if(transform.position.y > distToFloor || isJumping){
-					if(jump()){
-						turn (1) ;
-					}
+		
+		if(jobToDo){
+			doYourJob();
+		}else{
+			if(transform.position.y > distToFloor || isJumping){
+				if(jump()){
+					turn (1) ;
 				}
-				
-				if(isSlave && !isGoingForward && !inPlayerVicinity){
-					Debug.Log("going to my master") ;
-					goForward(5.0f, playerPos) ;
-				}
-				
 			}
+				
+			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
+				Debug.Log("going to my master") ;
+				goForward(5.0f, playerPos) ;
+			}*/
+				
 		}
+		
 		
 		RaycastHit hit;
 		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
@@ -142,46 +144,46 @@ public class MigeonBehavior : MonoBehaviour {
 	void doYourJob(){
 		
 		switch(code.actions[stepAction]){
-			case Genetics.MIGEON_ACTION.AVANCER :
+			case Genetics.MA.AVANCER :
 				if(goForward(autoMoveDistance)){
 					 
 					nextStep() ;
 				}
 			break;
-			case Genetics.MIGEON_ACTION.TURN_LEFT :
+			case Genetics.MA.TURN_LEFT :
 				if(turn (1)) {
 					nextStep() ;
 				}
 				break ;
-			case Genetics.MIGEON_ACTION.TURN_RIGHT :
+			case Genetics.MA.TURN_RIGHT :
 				if(turn (2)) {
 					nextStep() ;
 				}
 			break;
-			case Genetics.MIGEON_ACTION.JUMP :
+			case Genetics.MA.JUMP :
 				if(jump ()) {
 					nextStep() ;
 				}
 			break;
-			case Genetics.MIGEON_ACTION.PUT_CUBE :
+			case Genetics.MA.PUT_CUBE :
 				if(createBlock()) {
 					nextStep() ;
 				}
 				break;
 		}
-		if(stepAction >= code.actions.Length-1){
+
+		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
-			if(repeatAction >= code.nbRepeat && !isSlave){
+			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
-		}
+		}    
 	}
 	
 	bool canIGo(Vector3 direction, float distance){
-		if(Physics.Raycast(rigidbody.transform.position+direction, direction, distance)){
-			RaycastHit hit;
-			Physics.Raycast(rigidbody.transform.position+direction, direction, out hit, distance) ;
+        RaycastHit hit;
+        if(Physics.Raycast(rigidbody.transform.position, direction,out hit, distance)){
 			return false ;
 		}
 		return true ;
@@ -246,13 +248,13 @@ public class MigeonBehavior : MonoBehaviour {
 	}
 
 	public bool jump(){
-		if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
+		//if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
 				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
 			}
-		}
+		
 		
 		if(isJumping){		
 			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
@@ -277,7 +279,7 @@ public class MigeonBehavior : MonoBehaviour {
 
 	bool createBlock(){
 		float distance = 1 ;
-		if(canIGo(rigidbody.transform.forward, distance+0.1f)){
+		if(canIGo(rigidbody.transform.forward, distance)){
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			Vector3 newPos = rigidbody.position + transform.forward*distance ;
 			newPos.x = Mathf.Round(newPos.x) ;
@@ -303,9 +305,10 @@ public class MigeonBehavior : MonoBehaviour {
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, -Vector3.up, out hit,1.0f,layerToIgnore)){
 			if(Vector3.Distance(transform.position,hit.point+new Vector3(0.0f,distToFloor,0.0f))>=0.2f){
-				Debug.Log ("snap :"+hit.collider.gameObject.name) ;
+				//Debug.Log ("snap :"+hit.collider.gameObject.name) ;
 				transform.position = new Vector3(Mathf.Round(hit.point.x), Mathf.Round(hit.point.y), Mathf.Round(hit.point.z))+new Vector3(0.0f,distToFloor,0.0f) ;
 				rigidbody.velocity = new Vector3(0f,0f,0f) ;
+                rigidbody.angularVelocity = new Vector3(0f, 0f, 0f);
 			}
 		}
 		float newY = Mathf.Round(transform.rotation.eulerAngles.y / 90.0f) * 90.0f ;

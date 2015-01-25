@@ -6,7 +6,7 @@ public class Genetics {
 
     public class GeneticCode
     {
-        public MIGEON_ACTION[] actions;
+        public MA[] actions;
         public int nbRepeat = 0;
 
         private const int MIN_NB_ACTION_START = 5;
@@ -15,16 +15,24 @@ public class Genetics {
         private const int MIN_NB_REPEAT_START = 5;
         private const int MAX_NB_REPEAT_START = 10;
 
+        public static MA[] bizarre = {MA.AVANCER,MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE,MA.JUMP,MA.AVANCER,MA.TURN_RIGHT,MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE,MA.JUMP};
+        public static MA[] colimacon = { MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.TURN_LEFT };
+        public static MA[] allerretour = { MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.TURN_LEFT, MA.TURN_LEFT };
+        public static MA[] damier = { MA.TURN_LEFT, MA.TURN_LEFT, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP};
+        public static MA[] tree = { MA.TURN_LEFT, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.JUMP};
+
+        private MA[][] designs = { bizarre, colimacon, allerretour, damier, tree };
+
         public GeneticCode()
         {
-            this.actions = new MIGEON_ACTION[Random.Range(MIN_NB_ACTION_START, MAX_NB_ACTION_START)];
+            this.actions = new MA[Random.Range(MIN_NB_ACTION_START, MAX_NB_ACTION_START)];
             this.nbRepeat = Random.Range(MIN_NB_REPEAT_START, MAX_NB_REPEAT_START);
         }
 
         public GeneticCode createCopy()
         {
             GeneticCode code = new GeneticCode();
-            code.actions = new MIGEON_ACTION[this.actions.Length];
+            code.actions = new MA[this.actions.Length];
             for (int i = 0; i < actions.Length; i++)
                 code.actions[i] = actions[i];
             code.nbRepeat = nbRepeat;
@@ -34,6 +42,14 @@ public class Genetics {
         public void fill()
         {
             fillActionsEvaluated(this.actions);
+        }
+
+        public void fillWithDesigned()
+        {
+            int des = Random.Range(0, designs.Length - 1);
+            this.actions = new MA[designs[des].Length];
+            for (int i = 0; i < designs[des].Length; i++)
+                this.actions[i] = designs[des][i];
         }
        
         public string toString()
@@ -63,7 +79,7 @@ public class Genetics {
 
     };
 
-    public enum MIGEON_ACTION
+    public enum MA
     {
         AVANCER = 0,
         TURN_LEFT,
@@ -80,7 +96,21 @@ public class Genetics {
     public static GeneticCode makeGeneticCode()
     {
         GeneticCode code = new GeneticCode();
-        code.fill();
+        if (tirageAvecProba(0.3f))
+            code.fillWithDesigned();
+        else
+            if (tirageAvecProba(0.5f))
+            {
+                code.fillWithDesigned();
+                mutate(ref code);
+            }
+            else
+                code.fill();
+
+        /*code.actions = new MA[GeneticCode.colimacon.Length];
+        for (int i = 0; i < GeneticCode.colimacon.Length; i++)
+            code.actions[i] = GeneticCode.colimacon[i];*/
+
         return code;
     }
 
@@ -93,14 +123,14 @@ public class Genetics {
         }
 
         if (tirageAvecProba(PROBA_MUT_NB_REPEAT))
-            code.nbRepeat += tirageAvecProba(0.5f) ? -1 : 1;
+            code.nbRepeat += tirageAvecProba(0.5f) ? 1 : 3;
     }
 
     public static GeneticCode crossOver(GeneticCode code1, GeneticCode code2)
     {
         int newSize = ((code1.actions.Length + code2.actions.Length) / 2) + (tirageAvecProba(0.4f) ? -1 : 1);
         GeneticCode code = new GeneticCode();
-        code.nbRepeat = ((code1.nbRepeat + code2.nbRepeat) / 2) + (tirageAvecProba(0.4f) ? -1 : 1);
+        code.nbRepeat = ((code1.nbRepeat + code2.nbRepeat) / 2) + (tirageAvecProba(0.4f) ? 1 : 3);
 
         for (int i = 0; i < code.actions.Length; i++)
         {
@@ -140,10 +170,10 @@ public class Genetics {
         return false;
     }
 
-    private static float fillActionsEvaluated(MIGEON_ACTION[] actionsBase)
+    private static float fillActionsEvaluated(MA[] actionsBase)
     {
-        MIGEON_ACTION[] actions = new MIGEON_ACTION[actionsBase.Length];
-        MIGEON_ACTION[] bestActions = new MIGEON_ACTION[actionsBase.Length];
+        MA[] actions = new MA[actionsBase.Length];
+        MA[] bestActions = new MA[actionsBase.Length];
         float bestScore = 0;
         bool firstGeneration = true;
 
@@ -153,7 +183,7 @@ public class Genetics {
             float score = scoreActions(actions);
             if (firstGeneration || score > bestScore)
             {
-                MIGEON_ACTION[] tmp = bestActions;
+                MA[] tmp = bestActions;
                 bestActions = actions;
                 actions = tmp;
                 bestScore = score;
@@ -170,7 +200,7 @@ public class Genetics {
 
     }
 
-    private static void fillActionsRandom(MIGEON_ACTION[] actions)
+    private static void fillActionsRandom(MA[] actions)
     {
         for (int i = 0; i < actions.Length; i++)
         {
@@ -178,13 +208,13 @@ public class Genetics {
         }
     }
 
-    private static MIGEON_ACTION randomAction()
+    private static MA randomAction()
     {
-        MIGEON_ACTION action = (MIGEON_ACTION)Random.Range(0, (int) MIGEON_ACTION.NB_ACTIONS);
+        MA action = (MA)Random.Range(0, (int) MA.NB_ACTIONS);
         return action;
     }
 
-    private static float scoreActions(MIGEON_ACTION[] actions)
+    private static float scoreActions(MA[] actions)
     {
         float score = scoreOnTurns(actions);
         score += scoreOnBalance(actions);
@@ -196,13 +226,13 @@ public class Genetics {
         return score / 6.0f;
     }
 
-    private static float scoreOnTurns(MIGEON_ACTION[] actions)
+    private static float scoreOnTurns(MA[] actions)
     {
         float score = 1.0f;
         int lastTurn = -1;
         for (int i = 0; i < actions.Length; i++)
         {
-            if (actions[i] == MIGEON_ACTION.TURN_LEFT || actions[i] == MIGEON_ACTION.TURN_RIGHT)
+            if (actions[i] == MA.TURN_LEFT || actions[i] == MA.TURN_RIGHT)
             {
                 if (lastTurn >= 0)
                 {
@@ -218,12 +248,12 @@ public class Genetics {
 
     //EVALUATORS
 
-    private static float noPutAndMove(MIGEON_ACTION[] actions)
+    private static float noPutAndMove(MA[] actions)
     {
         float score = 1.0f;
         for (int i = 0; i < actions.Length-1; i++)
         {
-            if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i+1] == MIGEON_ACTION.AVANCER)
+            if (actions[i] == MA.PUT_CUBE && actions[i+1] == MA.AVANCER)
             {
                 score -= 1.0f / (float)(actions.Length-1);
             }
@@ -233,12 +263,12 @@ public class Genetics {
         return score;
     }
 
-    private static float yesPutJump(MIGEON_ACTION[] actions)
+    private static float yesPutJump(MA[] actions)
     {
         float score = 0.0f;
         for (int i = 0; i < actions.Length - 2; i++)
         {
-            if (actions[i] == MIGEON_ACTION.PUT_CUBE && actions[i + 1] == MIGEON_ACTION.JUMP)
+            if (actions[i] == MA.PUT_CUBE && actions[i + 1] == MA.JUMP)
             {
                 score += 1.0f / (float)(actions.Length - 1);
             }
@@ -248,7 +278,7 @@ public class Genetics {
         return score;
     }
 
-    private static float noDblAction(MIGEON_ACTION[] actions)
+    private static float noDblAction(MA[] actions)
     {
         float score = 1.0f;
         for (int i = 0; i < actions.Length - 2; i++)
@@ -263,12 +293,12 @@ public class Genetics {
         return score;
     }
 
-    private static float noJumpJump(MIGEON_ACTION[] actions)
+    private static float noJumpJump(MA[] actions)
     {
         float score = 1.0f;
         for (int i = 0; i < actions.Length - 2; i++)
         {
-            if (actions[i] == MIGEON_ACTION.JUMP && actions[i + 1] == MIGEON_ACTION.JUMP)
+            if (actions[i] == MA.JUMP && actions[i + 1] == MA.JUMP)
             {
                 score -= 1.0f / (float)(actions.Length - 1);
             }
@@ -276,12 +306,12 @@ public class Genetics {
         return score;
     }
 
-    private static float yesPutCube(MIGEON_ACTION[] actions)
+    private static float yesPutCube(MA[] actions)
     {
         float score = 0.0f;
         for (int i = 0; i < actions.Length - 2; i++)
         {
-            if (actions[i] != MIGEON_ACTION.PUT_CUBE && actions[i + 1] == MIGEON_ACTION.PUT_CUBE)
+            if (actions[i] != MA.PUT_CUBE && actions[i + 1] == MA.PUT_CUBE)
             {
                 score += 1.0f / (float)(actions.Length - 1);
             }
@@ -289,24 +319,24 @@ public class Genetics {
         return score;
     }
 
-    private static float scoreOnBalance(MIGEON_ACTION[] actions)
+    private static float scoreOnBalance(MA[] actions)
     {
-        int [] nbEach = new int [(int)MIGEON_ACTION.NB_ACTIONS];
+        int [] nbEach = new int [(int)MA.NB_ACTIONS];
         for (int i = 0; i < actions.Length; i++)
         {
             nbEach[(int)actions[i]]++;
         }
 
         float moyenne = 0;
-        for (int i = 0; i < (int)MIGEON_ACTION.NB_ACTIONS; i++)
+        for (int i = 0; i < (int)MA.NB_ACTIONS; i++)
             moyenne += nbEach[i];
         
-        moyenne /= (float)MIGEON_ACTION.NB_ACTIONS;
+        moyenne /= (float)MA.NB_ACTIONS;
 
         float variance = 0;
-        for (int i = 0; i < (int)MIGEON_ACTION.NB_ACTIONS; i++)
+        for (int i = 0; i < (int)MA.NB_ACTIONS; i++)
             variance += Mathf.Abs(moyenne-nbEach[i]);
-        variance /= (float)MIGEON_ACTION.NB_ACTIONS;
+        variance /= (float)MA.NB_ACTIONS;
 
         return 1.0f - (variance / (float)actions.Length);
     }
