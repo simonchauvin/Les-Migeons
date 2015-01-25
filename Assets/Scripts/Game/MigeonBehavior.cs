@@ -19,6 +19,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected Vector3 target ;
     protected Vector3 targetJump;
     protected Vector3 eulerAngleTarget;
+    protected Transform playerTransform;
 	protected Vector3 playerPos ;
 
     public bool isGoingForward { get; private set; }
@@ -116,7 +117,7 @@ public class MigeonBehavior : MonoBehaviour {
 		if(jobToDo){
 			doYourJob();
 		}else{
-			if(transform.position.y > distToFloor || isJumping){
+			if(transform.position.y > distToFloor+0.2f || isJumping){
 				if(jump()){
 					turn (1) ;
 				}
@@ -124,8 +125,10 @@ public class MigeonBehavior : MonoBehaviour {
             }else{
                 Debug.Log("wait for player");
                 waitForPlayer = true;
-                if(!audio.isPlaying)
-                    //audio.PlayOneShot(whatDoWeDo[Random.Range(0,whatDoWeDo.Length)]);
+                if (!audio.isPlaying) { 
+                    audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
+                    audio.PlayDelayed(Random.Range(5f, 10f));
+                }
             }
 				
 			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
@@ -189,7 +192,7 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
-            //repeatAction = 36;
+            repeatAction = 36;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
