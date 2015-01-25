@@ -30,7 +30,9 @@ public class MigeonBehavior : MonoBehaviour {
     public bool waitForPlayer {get; private set; }
 	
     public AudioClip[] whatDoWeDo ;
-    public AudioClip[] putCube ;
+    public AudioClip[] putCubeSounds ;
+    public AudioClip[] jumpSounds;
+    public AudioClip errorSound;
 
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
@@ -221,6 +223,7 @@ public class MigeonBehavior : MonoBehaviour {
 		Vector3 dir = Vector3.Normalize(target-rigidbody.position) ;
 		if(!canIGo(dir, moveDistance+0.1f)){
 			isGoingForward = false ;
+            audio.PlayOneShot(errorSound);
 			return true ;
 		}else{
 			rigidbody.AddForce(dir*5f,ForceMode.Impulse) ;
@@ -268,6 +271,7 @@ public class MigeonBehavior : MonoBehaviour {
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
 				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
+                audio.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
 			}
 		
 		
@@ -303,7 +307,11 @@ public class MigeonBehavior : MonoBehaviour {
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
 			cube.renderer.material.color = myBlaze ;
-		}
+            audio.PlayOneShot(putCubeSounds[Random.Range(0, putCubeSounds.Length)]);
+        }
+        else{
+            audio.PlayOneShot(errorSound);
+        }
 		return true ;
 	}
 	
