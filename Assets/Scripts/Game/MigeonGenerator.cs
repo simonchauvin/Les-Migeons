@@ -7,7 +7,7 @@ public class MigeonGenerator : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		parentMigeon = GameObject.Find("migeons") ;
-		for(int i = 0 ; i <= 60 ; i++){
+		for(int i = 0 ; i <= 5 ; i++){
 			if(i<5){
 				spawnMigeon (true) ;
 			}else{
@@ -17,7 +17,7 @@ public class MigeonGenerator : MonoBehaviour {
 	}
 	
 	void spawnMigeon(bool slave){
-		Vector3 position = Random.insideUnitSphere * 100 ;
+		Vector3 position = Random.insideUnitSphere * 50 ;
 		position.x = Mathf.Round (position.x) ;
 		position.y = 0.35f ;
 		position.z = Mathf.Round (position.z) ;
