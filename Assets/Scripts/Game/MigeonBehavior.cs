@@ -12,7 +12,6 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int repeatAction = 0 ;
 	protected float distToFloor = 0;
 
-
 	protected float autoMoveDistance = 1.0f ;
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
@@ -20,8 +19,8 @@ public class MigeonBehavior : MonoBehaviour {
 	protected Vector3 target ;
     protected Vector3 targetJump;
     protected Vector3 eulerAngleTarget;
-    protected Transform playerTransform;
-	protected Vector3 playerPos ;
+    //protected Transform playerTransform;
+	//protected Vector3 playerPos ;
 
     public bool isGoingForward { get; private set; }
 	public bool isTurning  {get; private set; }
@@ -30,6 +29,7 @@ public class MigeonBehavior : MonoBehaviour {
 	public bool wait {get; private set; }
     public bool waitForPlayer {get; private set; }
     public bool wantsToMate { get; set; }
+    public bool followPlayer { get; private set; }
 	
     public AudioClip[] whatDoWeDo ;
     public AudioClip[] putCubeSounds ;
@@ -37,7 +37,7 @@ public class MigeonBehavior : MonoBehaviour {
     public AudioClip errorSound;
     public AudioClip backSound;
 
-	protected bool inPlayerVicinity = false ;
+	//protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
 	
 	public bool carried { get; set; }
@@ -62,7 +62,9 @@ public class MigeonBehavior : MonoBehaviour {
 		carried = false ;
 		parentCube = GameObject.Find("cubes") ;
 		if(isSlave){
-			myBlaze = new Color(Random.Range(0f,0.5f),Random.value,Random.Range(0.6f,1f),0.5f) ;
+			myBlaze = new Color(0.1f,0.1f,0.9f,0.5f) ;
+            jobToDo = false;
+            followPlayer = true;
 		}else{
 			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
 		}
@@ -111,14 +113,6 @@ public class MigeonBehavior : MonoBehaviour {
 	void FixedUpdate() {
         if (carried || wait)
             return;
-
-		/*playerPos = player.transform.position ;
-		if(Vector3.Distance(playerPos, transform.position) <= 2.0f){
-			inPlayerVicinity = true ;
-		}else{
-			inPlayerVicinity = false ;
-		}*/
-	
 		
 		if(jobToDo && !waitForPlayer){
 			doYourJob();
@@ -137,7 +131,13 @@ public class MigeonBehavior : MonoBehaviour {
                     audio.PlayDelayed(Random.Range(5f, 10f));
                 }
             }
-				
+			
+	        if(isSlave && followPlayer){
+                if(Vector3.Distance(player.position, transform.position) > 2.0f){
+                    goForward(5.0f, player.position) ;
+                }
+            }
+
 			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
 				Debug.Log("going to my master") ;
 				goForward(5.0f, playerPos) ;
@@ -163,13 +163,12 @@ public class MigeonBehavior : MonoBehaviour {
 		repeatAction = 0 ;
 		jobToDo = true ;
         waitForPlayer = false ;
+        audio.PlayOneShot(backSound);
 	}
 
     public void backToWorkNow(){
-        Debug.Log("back To Work " + waitForPlayer);
         if (waitForPlayer){
             startJob();
-            audio.PlayOneShot(backSound);
         }
     }
 
@@ -224,7 +223,7 @@ public class MigeonBehavior : MonoBehaviour {
 	bool goForward(float moveDistance = 5.0f, Vector3 targetToGo = default(Vector3)){
 		if(!isGoingForward){
 			if(targetToGo.magnitude > 0.1f){
-				target = Vector3.Normalize(target-rigidbody.position)*5.0f ;
+				target = Vector3.Normalize(targetToGo-rigidbody.position)*5.0f ;
 				Debug.Log ("going to "+target) ;
 			}else{
 				target = transform.forward*moveDistance + rigidbody.position ;
