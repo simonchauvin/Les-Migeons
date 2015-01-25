@@ -21,5 +21,6 @@ public class MigeonAnimations : MonoBehaviour {
 		animator.SetBool("isGoingForward", behaviorScript.isGoingForward || behaviorScript.isTurning);
 		animator.SetBool("noJob", behaviorScript.wait);
 		animator.SetBool("awaiting", behaviorScript.waitForPlayer);
+        animator.SetBool("wantsToMate", behaviorScript.wantsToMate);
 	}
 }

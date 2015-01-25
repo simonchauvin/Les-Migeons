@@ -12,6 +12,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected int repeatAction = 0 ;
 	protected float distToFloor = 0;
 
+
 	protected float autoMoveDistance = 1.0f ;
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
@@ -28,6 +29,7 @@ public class MigeonBehavior : MonoBehaviour {
 	public bool isFalling  {get; private set; }
 	public bool wait {get; private set; }
     public bool waitForPlayer {get; private set; }
+    public bool wantsToMate { get; set; }
 	
     public AudioClip[] whatDoWeDo ;
     public AudioClip[] putCubeSounds ;
@@ -81,6 +83,7 @@ public class MigeonBehavior : MonoBehaviour {
             isGoingForward = false;
             wait = false ;
             waitForPlayer = false;
+            wantsToMate = false;
         }
         else if (wasCarried == true)
         {
