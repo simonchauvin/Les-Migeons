@@ -11,7 +11,7 @@ public class AudioManager : MonoBehaviour
 	/// <summary>
 	/// A sound.
 	/// </summary>
-	public AudioClip aSound;
+	public AudioClip music;
 
 	/// <summary>
 	/// The audio source.
@@ -46,13 +46,5 @@ public class AudioManager : MonoBehaviour
 	void Update ()
 	{
 
-	}
-
-	/// <summary>
-	/// Plays a sound.
-	/// </summary>
-	public void playASound ()
-	{
-		thisAudio.PlayOneShot(aSound, 1.0f);
 	}
 }
