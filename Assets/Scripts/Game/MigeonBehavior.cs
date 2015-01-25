@@ -19,12 +19,12 @@ public class MigeonBehavior : MonoBehaviour {
     protected Vector3 targetJump;
     protected Vector3 eulerAngleTarget;
 	protected Vector3 playerPos ;
-	
-	protected bool isGoingForward = false ;
-	protected bool isTurning = false ;
-	protected bool isJumping = false ;
-	protected bool isFalling = false ;
-	protected bool wait = false ;
+
+    public bool isGoingForward { get; private set; }
+	public bool isTurning  {get; private set; }
+	public bool isJumping  {get; private set; }
+	public bool isFalling  {get; private set; }
+	public bool wait {get; private set; }
 	
     public AudioSource audio;
     public AudioClip[] whatDoWeDo ;
