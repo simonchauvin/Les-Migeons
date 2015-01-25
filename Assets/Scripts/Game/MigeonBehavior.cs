@@ -28,7 +28,6 @@ public class MigeonBehavior : MonoBehaviour {
 	public bool wait {get; private set; }
     public bool waitForPlayer {get; private set; }
 	
-    public AudioSource audio;
     public AudioClip[] whatDoWeDo ;
     public AudioClip[] putCube ;
 
@@ -121,11 +120,12 @@ public class MigeonBehavior : MonoBehaviour {
 				if(jump()){
 					turn (1) ;
 				}
-            }
-            else{
+                Debug.Log("go down");
+            }else{
+                Debug.Log("wait for player");
                 waitForPlayer = true;
                 if(!audio.isPlaying)
-                    audio.PlayOneShot(whatDoWeDo[Random.Range(0,whatDoWeDo.Length)]);
+                    //audio.PlayOneShot(whatDoWeDo[Random.Range(0,whatDoWeDo.Length)]);
             }
 				
 			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
@@ -189,7 +189,7 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
-            //repeatAction += 36;
+            //repeatAction = 36;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
