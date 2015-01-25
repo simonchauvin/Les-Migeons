@@ -15,9 +15,9 @@ public class MigeonBehavior : MonoBehaviour {
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
 	protected bool jobToDo = true ;
-	public Vector3 target ;
-	public Vector3 targetJump ;
-	public Vector3 eulerAngleTarget ;
+	protected Vector3 target ;
+    protected Vector3 targetJump;
+    protected Vector3 eulerAngleTarget;
 	protected Vector3 playerPos ;
 	
 	protected bool isGoingForward = false ;
@@ -26,6 +26,10 @@ public class MigeonBehavior : MonoBehaviour {
 	protected bool isFalling = false ;
 	protected bool wait = false ;
 	
+    public AudioSource audio;
+    public AudioClip[] whatDoWeDo ;
+    public AudioClip[] putCube ;
+
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
 	
@@ -113,7 +117,10 @@ public class MigeonBehavior : MonoBehaviour {
 				if(jump()){
 					turn (1) ;
 				}
-			}
+            }
+            else{
+                //audio.PlayOneShot(clipStorage[Random.Range(0,clipStorage.Length)]);
+            }
 				
 			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
 				Debug.Log("going to my master") ;
@@ -135,7 +142,7 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 	}
 
-	void startJob(){
+	public void startJob(){
 		stepAction = 0 ;
 		repeatAction = 0 ;
 		jobToDo = true ;
