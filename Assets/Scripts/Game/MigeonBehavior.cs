@@ -33,6 +33,7 @@ public class MigeonBehavior : MonoBehaviour {
     public AudioClip[] putCubeSounds ;
     public AudioClip[] jumpSounds;
     public AudioClip errorSound;
+    public AudioClip backSound;
 
 	protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
@@ -125,6 +126,7 @@ public class MigeonBehavior : MonoBehaviour {
 				}
             }else{
                 waitForPlayer = true;
+                isGoingForward = false;
                 if (!audio.isPlaying) { 
                     audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
                     audio.PlayDelayed(Random.Range(5f, 10f));
@@ -157,6 +159,14 @@ public class MigeonBehavior : MonoBehaviour {
 		jobToDo = true ;
         waitForPlayer = false ;
 	}
+
+    public void backToWorkNow(){
+        Debug.Log("back To Work " + waitForPlayer);
+        if (waitForPlayer){
+            startJob();
+            audio.PlayOneShot(backSound);
+        }
+    }
 
 	void doYourJob(){
 		
@@ -192,6 +202,7 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
+            repeatAction += 12;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
@@ -320,13 +331,14 @@ public class MigeonBehavior : MonoBehaviour {
 		int oldLayer = gameObject.layer;
 		
 		//Change object layer to a layer it will be alone
-		gameObject.layer = LayerMask.NameToLayer("Ghost");
+		//gameObject.layer = LayerMask.NameToLayer("Ghost");
 		
 		int layerToIgnore = 1 << gameObject.layer;
 		layerToIgnore = ~layerToIgnore;
 
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, -Vector3.up, out hit,1.0f,layerToIgnore)){
+		//if (Physics.Raycast(transform.position, -Vector3.up, out hit,1.0f,layerToIgnore)){
+        if (Physics.Raycast(transform.position, -Vector3.up, out hit)){
 			if(Vector3.Distance(transform.position,hit.point+new Vector3(0.0f,distToFloor,0.0f))>=0.2f){
 				//Debug.Log ("snap :"+hit.collider.gameObject.name) ;
 				transform.position = new Vector3(Mathf.Round(hit.point.x), Mathf.Round(hit.point.y), Mathf.Round(hit.point.z))+new Vector3(0.0f,distToFloor,0.0f) ;
@@ -336,6 +348,6 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 		float newY = Mathf.Round(transform.rotation.eulerAngles.y / 90.0f) * 90.0f ;
 		transform.rotation = Quaternion.Euler(0.0f,newY,0.0f) ;
-		gameObject.layer = oldLayer;
+		//gameObject.layer = oldLayer;
 	}
 }

@@ -4,8 +4,11 @@ using System.Collections;
 public class MigeonGenerator : MonoBehaviour {
 	public Rigidbody migeon ;
 	private GameObject parentMigeon ;
+
+    private Transform player;
 	// Use this for initialization
 	void Start () {
+        player = GameObject.Find("Player").transform;
 		parentMigeon = GameObject.Find("migeons") ;
 		for(int i = 0 ; i <= 5 ; i++){
 			if(i<5){
@@ -33,9 +36,21 @@ public class MigeonGenerator : MonoBehaviour {
 		migeon1.gameObject.transform.parent = parentMigeon.transform ;
 		migeon1.GetComponent<MigeonBehavior>().isSlave = slave ;
 	}
+
+    public void backToWork(){
+        Collider[] hitColliders = Physics.OverlapSphere(player.position, 30f, LayerMask.GetMask("Migeon"));
+        int i = 0;
+        while (i < hitColliders.Length) {
+            hitColliders[i].SendMessage("backToWorkNow");
+            i++;
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (Input.GetKeyDown("m"))
+        {
+            backToWork();
+        }
 	}
 }
