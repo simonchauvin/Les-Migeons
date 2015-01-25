@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnitySampleAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour {
 
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour {
             {
                 setLabel(MESSAGE.TAKE);
 
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Fire1"))
                 {
                     carriedMigeon = hit.collider.transform;
                     carriedMigeon.GetComponent<MigeonBehavior>().takeControl(true);
@@ -122,7 +123,7 @@ public class PlayerController : MonoBehaviour {
 
             bool releaseMigeon = false;
 
-            if (Input.GetButtonDown("Fire2"))
+            if (CrossPlatformInputManager.GetButtonDown("Fire2"))
             {
                 Genetics.GeneticCode code = carriedMigeon.GetComponent<MigeonBehavior>().code.createCopy();
                 Genetics.mutate(ref code);
@@ -134,7 +135,7 @@ public class PlayerController : MonoBehaviour {
                 releaseMigeon = true;
             }
 
-            if (Input.GetButtonDown("Fire1"))
+            if (Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.E))
             {
                 if (migeonItWantsToFuck)
                 {
@@ -150,8 +151,8 @@ public class PlayerController : MonoBehaviour {
                     releaseMigeon = true;   
                 }
             }
-			
-			if (Input.GetKeyDown(KeyCode.E))
+
+            if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Fire1"))
 			{
                 releaseMigeon = true;
 			}
