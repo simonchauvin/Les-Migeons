@@ -269,12 +269,12 @@ public class MigeonBehavior : MonoBehaviour {
 	}
 
 	public bool jump(bool tombe = false){
-        if (Physics.Raycast(transform.position + transform.forward, Vector3.down, 5) || tombe)
+        //if (Physics.Raycast(transform.position + transform.forward, Vector3.down, 5) || tombe)
         {
 		//if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
-				isJumping = true ;;
+				isJumping = true ;
 				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
                 audio.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
 			}
