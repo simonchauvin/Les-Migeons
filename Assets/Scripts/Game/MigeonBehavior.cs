@@ -125,7 +125,7 @@ public class MigeonBehavior : MonoBehaviour {
 				}
             }else{
                 waitForPlayer = true;
-
+				transform.LookAt(player.transform);
                 if (!audio.isPlaying) { 
                     audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
                     audio.PlayDelayed(Random.Range(5f, 10f));
