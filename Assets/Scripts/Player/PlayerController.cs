@@ -121,6 +121,7 @@ public class PlayerController : MonoBehaviour {
                 nouveauMigeon.GetComponent<MigeonBehavior>().code = code;
                 nouveauMigeon.rigidbody.isKinematic = false;
                 nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+                releaseMigeon = true;
             }
 
             if (Input.GetButtonDown("Fire1"))
@@ -131,10 +132,13 @@ public class PlayerController : MonoBehaviour {
                     Genetics.GeneticCode code2 = migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
                     Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
 
+                    //migeonItWantsToFuck.GetComponent<MigeonBehavior>().startJob();
+
                     Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position) / 2, Quaternion.identity) as Transform;
                     nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
                     nouveauMigeon.rigidbody.isKinematic = false;
                     nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+                    releaseMigeon = true;
                 }
             }
 			
