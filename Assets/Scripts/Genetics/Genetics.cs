@@ -46,7 +46,7 @@ public class Genetics {
 
         public void fillWithDesigned()
         {
-            int des = Random.Range(0, designs.Length - 1);
+            int des = Random.Range(0, designs.Length);
             this.actions = new MA[designs[des].Length];
             for (int i = 0; i < designs[des].Length; i++)
                 this.actions[i] = designs[des][i];
@@ -97,15 +97,15 @@ public class Genetics {
     {
         GeneticCode code = new GeneticCode();
         if (tirageAvecProba(0.3f))
+        {
             code.fillWithDesigned();
-        else
-            if (tirageAvecProba(0.5f))
+            if (tirageAvecProba(0.8f))
             {
-                code.fillWithDesigned();
                 mutate(ref code);
             }
-            else
-                code.fill();
+        }
+        else
+            code.fill();
 
         /*code.actions = new MA[GeneticCode.colimacon.Length];
         for (int i = 0; i < GeneticCode.colimacon.Length; i++)
