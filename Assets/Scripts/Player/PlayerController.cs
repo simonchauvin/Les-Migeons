@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     timeWantToFuck = 0;
                     migeonItWantsToFuck = hit.transform;
+                    carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = true;
                 }
             }
 
@@ -91,6 +92,7 @@ public class PlayerController : MonoBehaviour {
                 if (directionMigeon.magnitude > 6.0f)
                 {
                     migeonItWantsToFuck = null;
+                    carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = false;
                 }
                 else
                 {
@@ -118,8 +120,8 @@ public class PlayerController : MonoBehaviour {
                 Genetics.mutate(ref code);
 
                 Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, carriedMigeon.position + carriedMigeon.forward*2, Quaternion.identity) as Transform;
-                nouveauMigeon.GetComponent<MigeonBehavior>().code = code;
                 nouveauMigeon.rigidbody.isKinematic = false;
+                nouveauMigeon.GetComponent<MigeonBehavior>().code = code;
                 nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
                 releaseMigeon = true;
             }
@@ -131,14 +133,13 @@ public class PlayerController : MonoBehaviour {
                     Genetics.GeneticCode code1 = carriedMigeon.GetComponent<MigeonBehavior>().code;
                     Genetics.GeneticCode code2 = migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
                     Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
-
-                    //migeonItWantsToFuck.GetComponent<MigeonBehavior>().startJob();
-
+                    migeonItWantsToFuck.GetComponent<MigeonBehavior>().startJob();
                     Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position) / 2, Quaternion.identity) as Transform;
-                    nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
+                    
                     nouveauMigeon.rigidbody.isKinematic = false;
+                    nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
                     nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
-                    releaseMigeon = true;
+                    releaseMigeon = true;   
                 }
             }
 			
@@ -149,10 +150,11 @@ public class PlayerController : MonoBehaviour {
 
             if (releaseMigeon)
             {
-                carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon.rigidbody.isKinematic = false;
+                carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon = null;
                 migeonItWantsToFuck = null;
+                carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = false;
                 if (grabMigeonLabel != null)
                     grabMigeonLabel.SetActive(false);
 
