@@ -18,6 +18,8 @@ public class MigeonAnimations : MonoBehaviour {
 	void Update ()
 	{
 		animator.SetBool("carried", behaviorScript.carried);
-		//animator.SetBool("walk", behaviorScript.);
+		animator.SetBool("isGoingForward", behaviorScript.isGoingForward || behaviorScript.isTurning);
+		animator.SetBool("noJob", behaviorScript.wait);
+		animator.SetBool("awaiting", behaviorScript.waitForPlayer);
 	}
 }
