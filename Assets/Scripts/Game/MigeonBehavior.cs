@@ -2,6 +2,7 @@
 using System.Collections;
 
 [RequireComponent (typeof (Rigidbody))]
+[RequireComponent (typeof (AudioSource))] 
 public class MigeonBehavior : MonoBehaviour {
 
 	private Transform player;
@@ -25,6 +26,7 @@ public class MigeonBehavior : MonoBehaviour {
 	public bool isJumping  {get; private set; }
 	public bool isFalling  {get; private set; }
 	public bool wait {get; private set; }
+    public bool waitForPlayer {get; private set; }
 	
     public AudioSource audio;
     public AudioClip[] whatDoWeDo ;
@@ -40,6 +42,7 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	protected Color myBlaze ;
 	
+   
 	// Use this for initialization
 	void Start () {
         jobToDo = true;
@@ -74,6 +77,7 @@ public class MigeonBehavior : MonoBehaviour {
             isTurning = false;
             isGoingForward = false;
             wait = false ;
+            waitForPlayer = false;
         }
         else if (wasCarried == true)
         {
@@ -119,7 +123,9 @@ public class MigeonBehavior : MonoBehaviour {
 				}
             }
             else{
-                //audio.PlayOneShot(clipStorage[Random.Range(0,clipStorage.Length)]);
+                waitForPlayer = true;
+                if(!audio.isPlaying)
+                    audio.PlayOneShot(whatDoWeDo[Random.Range(0,whatDoWeDo.Length)]);
             }
 				
 			/*if(isSlave && !isGoingForward && !inPlayerVicinity){
@@ -146,6 +152,7 @@ public class MigeonBehavior : MonoBehaviour {
 		stepAction = 0 ;
 		repeatAction = 0 ;
 		jobToDo = true ;
+        waitForPlayer = false ;
 	}
 
 	void doYourJob(){
@@ -182,6 +189,7 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
+            //repeatAction += 36;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
