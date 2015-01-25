@@ -114,16 +114,14 @@ public class MigeonBehavior : MonoBehaviour {
 		}*/
 	
 		
-		if(jobToDo){
+		if(jobToDo && !waitForPlayer){
 			doYourJob();
 		}else{
 			if(transform.position.y > distToFloor+0.2f || isJumping){
 				if(jump()){
 					turn (1) ;
 				}
-                Debug.Log("go down");
             }else{
-                Debug.Log("wait for player");
                 waitForPlayer = true;
                 if (!audio.isPlaying) { 
                     audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
@@ -192,7 +190,6 @@ public class MigeonBehavior : MonoBehaviour {
 		if(stepAction >= code.actions.Length){
 			stepAction = 0 ;
 			repeatAction++ ;
-            repeatAction = 36;
 			if(repeatAction >= code.nbRepeat){
 				jobToDo = false ;
 			}
