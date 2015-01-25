@@ -24,6 +24,9 @@ ModelImporter:
     4300000: Migeon
     7400000: Default Take
     7400002: Walk
+    7400004: Carried
+    7400006: Stop
+    7400008: Awaiting
     9500000: //RootNode
     13700000: Migeon
   materials:
@@ -88,9 +91,141 @@ ModelImporter:
       maskSource: {instanceID: 0}
     - serializedVersion: 16
       name: Walk
-      takeName: ArmatureAction_005
+      takeName: Walk
       firstFrame: -1
       lastFrame: 17
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Chest
+        weight: 1
+      - path: Armature/Chest/Head
+        weight: 1
+      - path: Armature/Chest/LeftArm
+        weight: 1
+      - path: Armature/Chest/LeftLeg
+        weight: 1
+      - path: Armature/Chest/RightArm
+        weight: 1
+      - path: Armature/Chest/RightLeg
+        weight: 1
+      - path: Migeon
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Carried
+      takeName: Carried
+      firstFrame: -1
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Chest
+        weight: 1
+      - path: Armature/Chest/Head
+        weight: 1
+      - path: Armature/Chest/LeftArm
+        weight: 1
+      - path: Armature/Chest/LeftLeg
+        weight: 1
+      - path: Armature/Chest/RightArm
+        weight: 1
+      - path: Armature/Chest/RightLeg
+        weight: 1
+      - path: Migeon
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Stop
+      takeName: Stop
+      firstFrame: -1
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Chest
+        weight: 1
+      - path: Armature/Chest/Head
+        weight: 1
+      - path: Armature/Chest/LeftArm
+        weight: 1
+      - path: Armature/Chest/LeftLeg
+        weight: 1
+      - path: Armature/Chest/RightArm
+        weight: 1
+      - path: Armature/Chest/RightLeg
+        weight: 1
+      - path: Migeon
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Awaiting
+      takeName: Awaiting
+      firstFrame: -1
+      lastFrame: 23
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
