@@ -99,7 +99,7 @@ public class Genetics {
         if (tirageAvecProba(0.3f))
         {
             code.fillWithDesigned();
-            if (tirageAvecProba(0.8f))
+            if (tirageAvecProba(0.3f))
             {
                 mutate(ref code);
             }

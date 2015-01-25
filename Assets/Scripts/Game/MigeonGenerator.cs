@@ -7,7 +7,7 @@ public class MigeonGenerator : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		parentMigeon = GameObject.Find("migeons") ;
-		for(int i = 0 ; i <= 5 ; i++){
+		for(int i = 0 ; i <= 10 ; i++){
 			if(i<5){
 				spawnMigeon (true) ;
 			}else{

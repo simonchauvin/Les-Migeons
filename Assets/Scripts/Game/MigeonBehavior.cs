@@ -123,7 +123,7 @@ public class MigeonBehavior : MonoBehaviour {
 			doYourJob();
 		}else{
 			if(transform.position.y > distToFloor+0.2f || isJumping){
-				if(jump()){
+				if(jump(true)){
 					turn (1) ;
 				}
             }else{
@@ -268,7 +268,9 @@ public class MigeonBehavior : MonoBehaviour {
 		return false ;
 	}
 
-	public bool jump(){
+	public bool jump(bool tombe = false){
+        if (Physics.Raycast(transform.position + transform.forward, Vector3.down, 5) || tombe)
+        {
 		//if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
 				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
@@ -276,7 +278,7 @@ public class MigeonBehavior : MonoBehaviour {
 				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
                 audio.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
 			}
-		
+		}
 		
 		if(isJumping){		
 			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
