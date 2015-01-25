@@ -14,7 +14,7 @@ public class MigeonBehavior : MonoBehaviour {
 	protected float autoMoveDistance = 1.0f ;
 	protected float speed = 1f ;
 	protected float speedRotation = 0.5f ;
-	protected bool jobToDo = true ;
+	public bool jobToDo {get; private set; }
 	protected Vector3 target ;
     protected Vector3 targetJump;
     protected Vector3 eulerAngleTarget;
@@ -42,7 +42,7 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-
+        jobToDo = true;
         wait = true;
         Invoke("endWait", 3.0f);
 
