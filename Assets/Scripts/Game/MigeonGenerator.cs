@@ -10,21 +10,20 @@ public class MigeonGenerator : MonoBehaviour {
 	void Start () {
         player = GameObject.Find("Player").transform;
 		parentMigeon = GameObject.Find("migeons") ;
+		for(int i = 0 ; i <= Genetics.GeneticCode.getNbDesign() ; i++){
+			spawnMigeon (false,i) ;
+		}
 		for(int i = 0 ; i <= 10 ; i++){
-			if(i<0){
-				spawnMigeon (true) ;
-			}else{
-				spawnMigeon (false) ;
-			}
+			spawnMigeon (false) ;
 		}
 	}
 	
-	void spawnMigeon(bool slave){
+	void spawnMigeon(bool slave, int numDesign = -1){
 		Vector3 position = Random.insideUnitSphere * 50 ;
 		position.x = Mathf.Round (position.x) ;
 		position.y = 0.35f ;
 		position.z = Mathf.Round (position.z) ;
-		while(Physics.OverlapSphere(position, 0.1f).Length > 0.1f){
+		while(Physics.CheckSphere(position, 3f,LayerMask.GetMask("Migeons"))){
 			Debug.Log ("Someone already here !") ;   
 			position = Random.insideUnitSphere * 10 ;
 			position.y = 1.0f ;
@@ -33,6 +32,12 @@ public class MigeonGenerator : MonoBehaviour {
 		float yRot = 90f*Random.Range (0,4) ;
 		Quaternion rotation = Quaternion.Euler(0.0f,yRot,0.0f) ;
 		Rigidbody migeon1 = (Rigidbody) Instantiate(migeon, position, rotation);
+		if (numDesign >= 0) {
+			migeon1.GetComponent<MigeonBehavior> ().code = new Genetics.GeneticCode ();
+			migeon1.GetComponent<MigeonBehavior> ().code.fillWithDesigned (numDesign);
+			Genetics.GeneticCode code = migeon1.GetComponent<MigeonBehavior>().code;
+			Genetics.mutateOne(ref code);
+		}
 		migeon1.gameObject.transform.parent = parentMigeon.transform ;
 		migeon1.GetComponent<MigeonBehavior>().isSlave = slave ;
 	}

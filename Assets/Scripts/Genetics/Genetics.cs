@@ -23,7 +23,7 @@ public class Genetics {
 		//public static MA[] plateforme = {MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT};
 		public static MA[] plateforme = {MA.PUT_CUBE_UNDER,MA.JUMP, MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_RIGHT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_RIGHT};
 
-        private MA[][] designs = { bizarre, colimacon, allerretour, damier, tree, plateforme };
+        private static MA[][] designs = { bizarre, colimacon, allerretour, damier, tree, plateforme };
 
         public GeneticCode()
         {
@@ -54,14 +54,19 @@ public class Genetics {
 			this.nbRepeat = code.nbRepeat;
 		}
 
-        public void fillWithDesigned()
+        public void fillWithDesigned(int numDesign = -1)
         {
 			int des = Random.Range(0, designs.Length);
-			//des=designs.Length-2;
+			if(numDesign >=0)
+				des = Mathf.Min(numDesign,designs.Length-1);
             this.actions = new MA[designs[des].Length];
             for (int i = 0; i < designs[des].Length; i++)
                 this.actions[i] = designs[des][i];
         }
+
+		public static int getNbDesign(){
+			return designs.Length;
+		}
        
         public string toString()
         {
@@ -119,10 +124,6 @@ public class Genetics {
         }
         else
             code.fill();
-
-        /*code.actions = new MA[GeneticCode.colimacon.Length];
-        for (int i = 0; i < GeneticCode.colimacon.Length; i++)
-            code.actions[i] = GeneticCode.colimacon[i];*/
 
         return code;
     }

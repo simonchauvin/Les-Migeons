@@ -51,7 +51,7 @@ public class MigeonBehavior : MonoBehaviour {
 
 	private float timeBlockedJump = 0.0f;
 	private const float timeBlockedJumpMax = 0.5f;
-	
+
    
 	// Use this for initialization
 	void Start () {
