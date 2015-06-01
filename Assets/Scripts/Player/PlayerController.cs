@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour {
             if (CrossPlatformInputManager.GetButtonDown("Fire2"))
             {
                 Genetics.GeneticCode code = carriedMigeon.GetComponent<MigeonBehavior>().code.createCopy();
-                Genetics.mutate(ref code);
+                Genetics.mutateOne(ref code);
 
                 Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, carriedMigeon.position + carriedMigeon.forward*2, Quaternion.identity) as Transform;
                 nouveauMigeon.GetComponent<Rigidbody>().isKinematic = false;
@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     Genetics.GeneticCode code1 = carriedMigeon.GetComponent<MigeonBehavior>().code;
                     Genetics.GeneticCode code2 = migeonItWantsToFuck.GetComponent<MigeonBehavior>().code;
-                    Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
+                    Genetics.GeneticCode code3 = Genetics.crossOverAndOptim(code1, code2);
                     migeonItWantsToFuck.GetComponent<MigeonBehavior>().startJob();
                     Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position) / 2, Quaternion.identity) as Transform;
                     
