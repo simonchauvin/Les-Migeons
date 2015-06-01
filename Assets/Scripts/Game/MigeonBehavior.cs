@@ -57,7 +57,7 @@ public class MigeonBehavior : MonoBehaviour {
         if (code == null) //si pas deja set par un instantiate
             code = Genetics.makeGeneticCode();
 
-        distToFloor = rigidbody.collider.bounds.size.y / 2f;
+        distToFloor = GetComponent<Rigidbody>().GetComponent<Collider>().bounds.size.y / 2f;
         player = GameObject.Find("Player").transform;
 		carried = false ;
 		parentCube = GameObject.Find("cubes") ;
@@ -69,7 +69,7 @@ public class MigeonBehavior : MonoBehaviour {
 			myBlaze = new Color(Random.Range(0.6f,1.0f),Random.value,Random.Range(0.0f,0.5f),0.5f) ;
 		}
 
-        transform.GetChild(0).GetChild(1).renderer.material.color = myBlaze;
+        transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material.color = myBlaze;
 	}
 
     public void takeControl(bool take)
@@ -126,9 +126,9 @@ public class MigeonBehavior : MonoBehaviour {
             }else{
                 waitForPlayer = true;
 				transform.LookAt(player.transform);
-                if (!audio.isPlaying) { 
-                    audio.clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
-                    audio.PlayDelayed(Random.Range(5f, 10f));
+                if (!GetComponent<AudioSource>().isPlaying) { 
+                    GetComponent<AudioSource>().clip = whatDoWeDo[Random.Range(0, whatDoWeDo.Length)];
+                    GetComponent<AudioSource>().PlayDelayed(Random.Range(5f, 10f));
                 }
             }
 			
@@ -147,14 +147,14 @@ public class MigeonBehavior : MonoBehaviour {
 		
 		
 		RaycastHit hit;
-		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
+		Physics.Raycast(GetComponent<Rigidbody>().transform.position, -Vector3.up, out hit) ;
 		if(!isFalling && hit.distance >= 1f){
 			isFalling = true ;
-		}else if(isFalling && rigidbody.velocity.y < 0.1f && hit.distance <= 1f){
+		}else if(isFalling && GetComponent<Rigidbody>().velocity.y < 0.1f && hit.distance <= 1f){
 			snapToFloor() ;
 			isFalling = false ;
 		}else if(isFalling){
-			rigidbody.AddForce(-Vector3.up*2f,ForceMode.Impulse) ;
+			GetComponent<Rigidbody>().AddForce(-Vector3.up*2f,ForceMode.Impulse) ;
 		}
 	}
 
@@ -163,7 +163,7 @@ public class MigeonBehavior : MonoBehaviour {
 		repeatAction = 0 ;
 		jobToDo = true ;
         waitForPlayer = false ;
-        audio.PlayOneShot(backSound);
+        GetComponent<AudioSource>().PlayOneShot(backSound);
 	}
 
     public void backToWorkNow(){
@@ -214,7 +214,7 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	bool canIGo(Vector3 direction, float distance){
         RaycastHit hit;
-        if(Physics.Raycast(rigidbody.transform.position, direction,out hit, distance)){
+        if(Physics.Raycast(GetComponent<Rigidbody>().transform.position, direction,out hit, distance)){
 			return false ;
 		}
 		return true ;
@@ -223,32 +223,32 @@ public class MigeonBehavior : MonoBehaviour {
 	bool goForward(float moveDistance = 5.0f, Vector3 targetToGo = default(Vector3)){
 		if(!isGoingForward){
 			if(targetToGo.magnitude > 0.1f){
-				target = Vector3.Normalize(targetToGo-rigidbody.position)*5.0f ;
+				target = Vector3.Normalize(targetToGo-GetComponent<Rigidbody>().position)*5.0f ;
 				Debug.Log ("going to "+target) ;
 			}else{
-				target = transform.forward*moveDistance + rigidbody.position ;
+				target = transform.forward*moveDistance + GetComponent<Rigidbody>().position ;
 				target.x = Mathf.Round(target.x) ;
 				target.y = Mathf.Round(target.y) ;
 				target.z = Mathf.Round(target.z) ;
 			}
 			isGoingForward = true ;
 		}
-		target.y = rigidbody.transform.position.y ;
-		Vector3 dir = Vector3.Normalize(target-rigidbody.position) ;
+		target.y = GetComponent<Rigidbody>().transform.position.y ;
+		Vector3 dir = Vector3.Normalize(target-GetComponent<Rigidbody>().position) ;
 		if(!canIGo(dir, moveDistance+0.1f)){
 			isGoingForward = false ;
-            audio.PlayOneShot(errorSound);
+            GetComponent<AudioSource>().PlayOneShot(errorSound);
 			return true ;
 		}else{
-			rigidbody.AddForce(dir*5f,ForceMode.Impulse) ;
+			GetComponent<Rigidbody>().AddForce(dir*5f,ForceMode.Impulse) ;
 		}
 
-		if(Vector3.Distance(rigidbody.transform.position, target) <= .2f){
-			rigidbody.MovePosition(target) ;
+		if(Vector3.Distance(GetComponent<Rigidbody>().transform.position, target) <= .2f){
+			GetComponent<Rigidbody>().MovePosition(target) ;
 			snapToFloor() ;
 			isFalling = false ;
 			isGoingForward = false ;
-			rigidbody.velocity = new Vector3(0f,0f,0f) ;
+			GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f) ;
 			return true ;
 		}
 		return false ;
@@ -258,10 +258,10 @@ public class MigeonBehavior : MonoBehaviour {
 		if(!isTurning){
 			if (direction == 1) {
 				//turn left
-				eulerAngleTarget = Quaternion.Euler(rigidbody.rotation.eulerAngles + new Vector3(0f,-90f,0f)).eulerAngles ;
+				eulerAngleTarget = Quaternion.Euler(GetComponent<Rigidbody>().rotation.eulerAngles + new Vector3(0f,-90f,0f)).eulerAngles ;
 			}else{
 				//turn right
-				eulerAngleTarget = Quaternion.Euler(rigidbody.rotation.eulerAngles + new Vector3(0f,90f,0f)).eulerAngles ;
+				eulerAngleTarget = Quaternion.Euler(GetComponent<Rigidbody>().rotation.eulerAngles + new Vector3(0f,90f,0f)).eulerAngles ;
 			}
 
 			isTurning = true ;
@@ -270,9 +270,9 @@ public class MigeonBehavior : MonoBehaviour {
 		float step = speedRotation * Time.deltaTime *100f ;
 		Quaternion deltaRotation = Quaternion.Euler(eulerAngleTarget * step);
 
-		rigidbody.MoveRotation(Quaternion.RotateTowards(rigidbody.rotation, Quaternion.Euler(eulerAngleTarget), step)) ;
-		if(Vector3.Distance(rigidbody.rotation.eulerAngles, eulerAngleTarget) <= 0.2f){
-			rigidbody.MoveRotation(Quaternion.Euler(eulerAngleTarget)) ;
+		GetComponent<Rigidbody>().MoveRotation(Quaternion.RotateTowards(GetComponent<Rigidbody>().rotation, Quaternion.Euler(eulerAngleTarget), step)) ;
+		if(Vector3.Distance(GetComponent<Rigidbody>().rotation.eulerAngles, eulerAngleTarget) <= 0.2f){
+			GetComponent<Rigidbody>().MoveRotation(Quaternion.Euler(eulerAngleTarget)) ;
 			isTurning = false ;
 			return true ;
 		}
@@ -282,29 +282,29 @@ public class MigeonBehavior : MonoBehaviour {
 	public bool jump(){
 		//if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
 			if(!isJumping){
-				targetJump = rigidbody.transform.position + (transform.forward*1.0f + transform.up) ;
+				targetJump = GetComponent<Rigidbody>().transform.position + (transform.forward*1.0f + transform.up) ;
 				isJumping = true ;;
-				rigidbody.AddForce((transform.up)*110f,ForceMode.Impulse) ;
-                audio.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
+				GetComponent<Rigidbody>().AddForce((transform.up)*110f,ForceMode.Impulse) ;
+                GetComponent<AudioSource>().PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
 			}
 		
 		
 		if(isJumping){		
-			if(targetJump.y - rigidbody.transform.position.y >= 1.0f){
-				rigidbody.AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
-			}else if(targetJump.y - rigidbody.transform.position.y >= -1.0f){
-				rigidbody.AddForce((transform.forward)*1.2f,ForceMode.Impulse) ;
+			if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= 1.0f){
+				GetComponent<Rigidbody>().AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
+			}else if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= -1.0f){
+				GetComponent<Rigidbody>().AddForce((transform.forward)*1.2f,ForceMode.Impulse) ;
 				isFalling = true ;
 			}
 		}
 		RaycastHit hit;
-		Physics.Raycast(rigidbody.transform.position, -Vector3.up, out hit) ;
-		if(isFalling && rigidbody.velocity.y <= 0.1f && hit.distance <= 1f){
-			rigidbody.MovePosition(new Vector3(targetJump.x, rigidbody.transform.position.y, targetJump.z)) ;
+		Physics.Raycast(GetComponent<Rigidbody>().transform.position, -Vector3.up, out hit) ;
+		if(isFalling && GetComponent<Rigidbody>().velocity.y <= 0.1f && hit.distance <= 1f){
+			GetComponent<Rigidbody>().MovePosition(new Vector3(targetJump.x, GetComponent<Rigidbody>().transform.position.y, targetJump.z)) ;
 			snapToFloor() ;
 			isJumping = false ;
 			isFalling = false ;
-			rigidbody.velocity = new Vector3(0f,0f,0f) ;
+			GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f) ;
 			return true ;
 		}
 		return false ;
@@ -312,19 +312,19 @@ public class MigeonBehavior : MonoBehaviour {
 
 	bool createBlock(){
 		float distance = 1 ;
-		if(canIGo(rigidbody.transform.forward, distance)){
+		if(canIGo(GetComponent<Rigidbody>().transform.forward, distance)){
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			Vector3 newPos = rigidbody.position + transform.forward*distance ;
+			Vector3 newPos = GetComponent<Rigidbody>().position + transform.forward*distance ;
 			newPos.x = Mathf.Round(newPos.x) ;
 			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor))+0.5f ;
 			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
-			cube.renderer.material.color = myBlaze ;
-            audio.PlayOneShot(putCubeSounds[Random.Range(0, putCubeSounds.Length)]);
+			cube.GetComponent<Renderer>().material.color = myBlaze ;
+            GetComponent<AudioSource>().PlayOneShot(putCubeSounds[Random.Range(0, putCubeSounds.Length)]);
         }
         else{
-            audio.PlayOneShot(errorSound);
+            GetComponent<AudioSource>().PlayOneShot(errorSound);
         }
 		return true ;
 	}
@@ -345,8 +345,8 @@ public class MigeonBehavior : MonoBehaviour {
 			if(Vector3.Distance(transform.position,hit.point+new Vector3(0.0f,distToFloor,0.0f))>=0.2f){
 				//Debug.Log ("snap :"+hit.collider.gameObject.name) ;
 				transform.position = new Vector3(Mathf.Round(hit.point.x), Mathf.Round(hit.point.y), Mathf.Round(hit.point.z))+new Vector3(0.0f,distToFloor,0.0f) ;
-				rigidbody.velocity = new Vector3(0f,0f,0f) ;
-                rigidbody.angularVelocity = new Vector3(0f, 0f, 0f);
+				GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f) ;
+                GetComponent<Rigidbody>().angularVelocity = new Vector3(0f, 0f, 0f);
 			}
 		}
 		float newY = Mathf.Round(transform.rotation.eulerAngles.y / 90.0f) * 90.0f ;

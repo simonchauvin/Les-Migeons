@@ -39,7 +39,7 @@ public class AudioManager : MonoBehaviour
 	void Start ()
 	{
 		// Components
-		thisAudio = audio;
+		thisAudio = GetComponent<AudioSource>();
 	}
 
 	// Update is called once per frame

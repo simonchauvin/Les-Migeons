@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnitySampleAssets.CrossPlatformInput;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour {
 
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     carriedMigeon = hit.collider.transform;
                     carriedMigeon.GetComponent<MigeonBehavior>().takeControl(true);
-                    carriedMigeon.rigidbody.isKinematic = true;
+                    carriedMigeon.GetComponent<Rigidbody>().isKinematic = true;
                 }
             }
             else
@@ -129,9 +129,9 @@ public class PlayerController : MonoBehaviour {
                 Genetics.mutate(ref code);
 
                 Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, carriedMigeon.position + carriedMigeon.forward*2, Quaternion.identity) as Transform;
-                nouveauMigeon.rigidbody.isKinematic = false;
+                nouveauMigeon.GetComponent<Rigidbody>().isKinematic = false;
                 nouveauMigeon.GetComponent<MigeonBehavior>().code = code;
-                nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+                nouveauMigeon.GetComponent<Rigidbody>().velocity = Vector3.up * 7f;
                 releaseMigeon = true;
             }
 
@@ -145,9 +145,9 @@ public class PlayerController : MonoBehaviour {
                     migeonItWantsToFuck.GetComponent<MigeonBehavior>().startJob();
                     Transform nouveauMigeon = GameObject.Instantiate(carriedMigeon, (carriedMigeon.position + migeonItWantsToFuck.position) / 2, Quaternion.identity) as Transform;
                     
-                    nouveauMigeon.rigidbody.isKinematic = false;
+                    nouveauMigeon.GetComponent<Rigidbody>().isKinematic = false;
                     nouveauMigeon.GetComponent<MigeonBehavior>().code = code3;
-                    nouveauMigeon.rigidbody.velocity = Vector3.up * 7f;
+                    nouveauMigeon.GetComponent<Rigidbody>().velocity = Vector3.up * 7f;
                     releaseMigeon = true;   
                 }
             }
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
 
             if (releaseMigeon)
             {
-                carriedMigeon.rigidbody.isKinematic = false;
+                carriedMigeon.GetComponent<Rigidbody>().isKinematic = false;
                 carriedMigeon.GetComponent<MigeonBehavior>().takeControl(false);
                 carriedMigeon.GetComponent<MigeonBehavior>().wantsToMate = false;
                 carriedMigeon = null;
