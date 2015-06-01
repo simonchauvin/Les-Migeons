@@ -20,8 +20,10 @@ public class Genetics {
         public static MA[] allerretour = { MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.TURN_LEFT, MA.TURN_LEFT };
         public static MA[] damier = { MA.TURN_LEFT, MA.TURN_LEFT, MA.JUMP, MA.PUT_CUBE, MA.JUMP, MA.PUT_CUBE, MA.JUMP};
         public static MA[] tree = { MA.TURN_LEFT, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.JUMP};
+		//public static MA[] plateforme = {MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE, MA.TURN_LEFT, MA.PUT_CUBE,MA.JUMP,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER,MA.AVANCER,MA.TURN_LEFT};
+		public static MA[] plateforme = {MA.PUT_CUBE_UNDER,MA.JUMP, MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_LEFT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_RIGHT,MA.PUT_CUBE_UNDER, MA.AVANCER,MA.TURN_RIGHT};
 
-        private MA[][] designs = { bizarre, colimacon, allerretour, damier, tree };
+        private MA[][] designs = { bizarre, colimacon, allerretour, damier, tree, plateforme };
 
         public GeneticCode()
         {
@@ -44,9 +46,18 @@ public class Genetics {
             fillActionsEvaluated(this.actions);
         }
 
+		public void initFromCode(GeneticCode code)
+		{
+			this.actions = new MA[code.actions.Length];
+			for (int i = 0; i < code.actions.Length; i++)
+				this.actions[i] = code.actions[i];
+			this.nbRepeat = code.nbRepeat;
+		}
+
         public void fillWithDesigned()
         {
-            int des = Random.Range(0, designs.Length);
+			int des = Random.Range(0, designs.Length);
+			//des=designs.Length-2;
             this.actions = new MA[designs[des].Length];
             for (int i = 0; i < designs[des].Length; i++)
                 this.actions[i] = designs[des][i];
@@ -86,6 +97,7 @@ public class Genetics {
         TURN_RIGHT,
         JUMP,
         PUT_CUBE,
+		PUT_CUBE_UNDER,
         NB_ACTIONS
     };
 
@@ -96,12 +108,13 @@ public class Genetics {
     public static GeneticCode makeGeneticCode()
     {
         GeneticCode code = new GeneticCode();
+
         if (tirageAvecProba(0.3f))
         {
             code.fillWithDesigned();
             if (tirageAvecProba(0.3f))
             {
-                mutate(ref code);
+				mutateAndOptim(ref code);
             }
         }
         else
@@ -114,7 +127,26 @@ public class Genetics {
         return code;
     }
 
-    public static void mutate(ref GeneticCode code)
+	public static float mutateAndOptim(ref GeneticCode code)
+	{
+		float bestScore = 0.0f;
+
+		GeneticCode copyCode = code.createCopy ();
+
+		for (int i=0; i<NB_TRIES_OPTIM; i++) {
+			mutate(ref copyCode);
+			float score = scoreActions (code.actions);
+			if(score > bestScore){
+				bestScore = score;
+				code.initFromCode(copyCode);
+			}
+		}
+
+		return bestScore;
+
+	}
+
+    private static void mutate(ref GeneticCode code)
     {
         for (int i = 0; i < code.actions.Length; i++)
         {
@@ -126,7 +158,33 @@ public class Genetics {
             code.nbRepeat += tirageAvecProba(0.5f) ? 1 : 3;
     }
 
-    public static GeneticCode crossOver(GeneticCode code1, GeneticCode code2)
+	public static void mutateOne(ref GeneticCode code)
+	{
+		int action = Random.Range (0, code.actions.Length-1);
+		code.actions[action] = randomAction();
+		if (tirageAvecProba(PROBA_MUT_NB_REPEAT))
+			code.nbRepeat += tirageAvecProba(0.5f) ? 1 : 3;
+	}
+
+	public static GeneticCode crossOverAndOptim(GeneticCode code1, GeneticCode code2)
+	{
+		float bestScore = 0.0f;
+		
+		GeneticCode codeCrossBest = crossOver(code1,code2);
+		
+		for (int i=0; i<NB_TRIES_OPTIM; i++) {
+			GeneticCode codeCross = crossOver(code1,code2);
+			float score = scoreActions (codeCross.actions);
+			if(score > bestScore){
+				bestScore = score;
+				codeCrossBest = codeCross;
+			}
+		}
+		
+		return codeCrossBest;
+	}
+
+	private static GeneticCode crossOver(GeneticCode code1, GeneticCode code2)
     {
         int newSize = ((code1.actions.Length + code2.actions.Length) / 2) + (tirageAvecProba(0.4f) ? -1 : 1);
         GeneticCode code = new GeneticCode();

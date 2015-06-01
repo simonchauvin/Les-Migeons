@@ -22,20 +22,20 @@ public class GeneticsTester : MonoBehaviour {
         writer.Close();
 
         code1.toString();
-        Genetics.mutate(ref code1);
+        Genetics.mutateAndOptim(ref code1);
         code1.toString();
         code2 = Genetics.makeGeneticCode();
         code2.toString();
-        Genetics.mutate(ref code2);
+		Genetics.mutateAndOptim(ref code2);
         code2.toString();
 
 
-        Genetics.GeneticCode code3 = Genetics.crossOver(code1, code2);
+        Genetics.GeneticCode code3 = Genetics.crossOverAndOptim(code1, code2);
         code1.toString();
         code2.toString();
         code3.toString();
 
-        code3 = Genetics.crossOver(code1, code2);
+		code3 = Genetics.crossOverAndOptim(code1, code2);
         code3.toString();
 
         

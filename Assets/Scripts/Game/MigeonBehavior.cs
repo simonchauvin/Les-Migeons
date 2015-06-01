@@ -37,6 +37,8 @@ public class MigeonBehavior : MonoBehaviour {
     public AudioClip errorSound;
     public AudioClip backSound;
 
+	public Material cubeMaterial;
+
 	//protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
 	
@@ -46,6 +48,9 @@ public class MigeonBehavior : MonoBehaviour {
 	protected GameObject parentCube ;
 	
 	protected Color myBlaze ;
+
+	private float timeBlockedJump = 0.0f;
+	private const float timeBlockedJumpMax = 0.5f;
 	
    
 	// Use this for initialization
@@ -120,7 +125,7 @@ public class MigeonBehavior : MonoBehaviour {
 			if(transform.position.y > distToFloor+0.2f || isJumping || isTurning){
                 if (isTurning){
                     turn (1) ;
-                }else if(jump()){
+                }else if(jump(true)){
 					turn (1) ;
 				}
             }else{
@@ -201,6 +206,11 @@ public class MigeonBehavior : MonoBehaviour {
 					nextStep() ;
 				}
 				break;
+			case Genetics.MA.PUT_CUBE_UNDER :
+				if(createBlock(true)) {
+					nextStep() ;
+				}
+				break;
 		}
 
 		if(stepAction >= code.actions.Length){
@@ -219,9 +229,32 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 		return true ;
 	}
+
+	bool willFall(){
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position + transform.forward + transform.up, -transform.up,out hit, 3.0f)){
+			return false ;
+		}
+		return true ;
+	}
+
+	bool isCube(Vector3 pos, float dist)
+	{
+		if (Physics.CheckSphere (pos, dist))
+			return true;
+		return false;
+
+		/*RaycastHit hit;
+		if(Physics.Raycast(pos - Vector3.up, -Vector3.up,out hit, 1.0f)){
+			return true ;
+		}
+		return false ;*/
+	}
 	
 	bool goForward(float moveDistance = 5.0f, Vector3 targetToGo = default(Vector3)){
 		if(!isGoingForward){
+			if(willFall())
+				return true;
 			if(targetToGo.magnitude > 0.1f){
 				target = Vector3.Normalize(targetToGo-GetComponent<Rigidbody>().position)*5.0f ;
 				Debug.Log ("going to "+target) ;
@@ -231,7 +264,7 @@ public class MigeonBehavior : MonoBehaviour {
 				target.y = Mathf.Round(target.y) ;
 				target.z = Mathf.Round(target.z) ;
 			}
-			isGoingForward = true ;
+			isGoingForward = true ; 
 		}
 		target.y = GetComponent<Rigidbody>().transform.position.y ;
 		Vector3 dir = Vector3.Normalize(target-GetComponent<Rigidbody>().position) ;
@@ -276,51 +309,91 @@ public class MigeonBehavior : MonoBehaviour {
 			isTurning = false ;
 			return true ;
 		}
-		return false ;
+		return false ; 
 	}
 
-	public bool jump(){
+	public bool jump(bool allowFall = false){
+
+
 		//if(canIGo(Vector3.Normalize(transform.forward+transform.up),1.1f)){
-			if(!isJumping){
-				targetJump = GetComponent<Rigidbody>().transform.position + (transform.forward*1.0f + transform.up) ;
-				isJumping = true ;;
-				GetComponent<Rigidbody>().AddForce((transform.up)*110f,ForceMode.Impulse) ;
-                GetComponent<AudioSource>().PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
-			}
+		if(!isJumping){
+			if(willFall() && !allowFall)
+				return true;
+			targetJump = GetComponent<Rigidbody>().transform.position + (transform.forward*1.0f + transform.up) ;
+			isJumping = true;
+			GetComponent<Rigidbody>().AddForce((transform.up)*110f,ForceMode.Impulse) ;
+            GetComponent<AudioSource>().PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)]);
+		}
 		
 		
 		if(isJumping){		
-			if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= 1.0f){
-				GetComponent<Rigidbody>().AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
-			}else if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= -1.0f){
-				GetComponent<Rigidbody>().AddForce((transform.forward)*1.2f,ForceMode.Impulse) ;
+			/*if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= 1.0f){
+				//GetComponent<Rigidbody>().AddForce((transform.forward)*0.5f,ForceMode.Impulse) ;
+			}else if(targetJump.y - GetComponent<Rigidbody>().transform.position.y >= -0.5f){
+				GetComponent<Rigidbody>().AddForce((transform.forward)*1.5f,ForceMode.Impulse) ;
 				isFalling = true ;
+			}else{
+				GetComponent<Rigidbody>().velocity = new Vector3(0,GetComponent<Rigidbody>().velocity.y,0) ;
+			}*/
+
+			if(transform.position.y-targetJump.y >= 0.0)
+				GetComponent<Rigidbody>().AddForce((transform.forward)*4f,ForceMode.Impulse) ;
+			else
+				GetComponent<Rigidbody>().velocity = new Vector3(0,GetComponent<Rigidbody>().velocity.y,0) ;
+
+			Vector3 vitHor = new Vector3(GetComponent<Rigidbody>().velocity.x,0,GetComponent<Rigidbody>().velocity.z);
+			//Debug.Log (vitHor.magnitude);
+			if(vitHor.magnitude > 1.0){
+				vitHor = vitHor.normalized * 1.0f;
+				GetComponent<Rigidbody>().velocity = new Vector3(vitHor.x,GetComponent<Rigidbody>().velocity.y,vitHor.z);
 			}
 		}
+
 		RaycastHit hit;
 		Physics.Raycast(GetComponent<Rigidbody>().transform.position, -Vector3.up, out hit) ;
-		if(isFalling && GetComponent<Rigidbody>().velocity.y <= 0.1f && hit.distance <= 1f){
-			GetComponent<Rigidbody>().MovePosition(new Vector3(targetJump.x, GetComponent<Rigidbody>().transform.position.y, targetJump.z)) ;
-			snapToFloor() ;
-			isJumping = false ;
-			isFalling = false ;
-			GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f) ;
-			return true ;
+		if (GetComponent<Rigidbody> ().velocity.y < -0.1f && hit.distance <= 1f) {
+			GetComponent<Rigidbody> ().MovePosition (new Vector3 (targetJump.x, GetComponent<Rigidbody> ().transform.position.y, targetJump.z));
+			snapToFloor ();
+			isJumping = false;
+			isFalling = false;
+			GetComponent<Rigidbody> ().velocity = new Vector3 (0f, 0f, 0f);
+			return true;
+		} 
+
+		//Bloque
+		if(GetComponent<Rigidbody> ().velocity.magnitude < 1.0)
+		{
+			timeBlockedJump += Time.deltaTime;
 		}
+		else
+			timeBlockedJump = 0.0f;
+
+		if(timeBlockedJump > timeBlockedJumpMax)
+		{
+			timeBlockedJump = 0.0f;
+			GetComponent<Rigidbody>().AddForce(Random.onUnitSphere*100f,ForceMode.Impulse) ;
+		}
+
 		return false ;
 	}
 
-	bool createBlock(){
+	bool createBlock(bool under = false){
 		float distance = 1 ;
-		if(canIGo(GetComponent<Rigidbody>().transform.forward, distance)){
+
+		Vector3 newPos = GetComponent<Rigidbody>().position + transform.forward*distance ;
+		newPos.x = Mathf.Round(newPos.x) ;
+		newPos.y =	Mathf.Floor(newPos.y)+0.5f ;
+		if (under)
+			newPos.y -= 1.0f;
+		newPos.z = Mathf.Round(newPos.z) ;
+
+
+		if(!isCube(newPos, 0.3f)){
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			Vector3 newPos = GetComponent<Rigidbody>().position + transform.forward*distance ;
-			newPos.x = Mathf.Round(newPos.x) ;
-			newPos.y = Mathf.Round((newPos.y+0.5f-distToFloor))+0.5f ;
-			newPos.z = Mathf.Round(newPos.z) ;
 			cube.transform.position = newPos ;
 			cube.transform.parent = parentCube.transform ;
-			cube.GetComponent<Renderer>().material.color = myBlaze ;
+			cube.GetComponent<MeshRenderer>().material = cubeMaterial;
+			cube.GetComponent<MeshRenderer>().material.color = myBlaze ;
             GetComponent<AudioSource>().PlayOneShot(putCubeSounds[Random.Range(0, putCubeSounds.Length)]);
         }
         else{
@@ -335,7 +408,7 @@ public class MigeonBehavior : MonoBehaviour {
 		
 		//Change object layer to a layer it will be alone
 		//gameObject.layer = LayerMask.NameToLayer("Ghost");
-		
+		 
 		int layerToIgnore = 1 << gameObject.layer;
 		layerToIgnore = ~layerToIgnore;
 
