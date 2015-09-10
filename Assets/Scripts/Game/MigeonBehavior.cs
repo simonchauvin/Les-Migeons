@@ -52,9 +52,12 @@ public class MigeonBehavior : MonoBehaviour {
 	private float timeBlockedJump = 0.0f;
 	private const float timeBlockedJumpMax = 0.5f;
 
-   
-	// Use this for initialization
-	void Start () {
+    //for the replay system
+    private ReplaySystem rSystem;
+    private float logStep = 0f;
+
+    // Use this for initialization
+    void Start () {
         jobToDo = true;
         wait = true;
         Invoke("endWait", 3.0f);
@@ -75,7 +78,10 @@ public class MigeonBehavior : MonoBehaviour {
 		}
 
         transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material.color = myBlaze;
-	}
+
+        rSystem = GameObject.Find("Gameplay").GetComponent<ReplaySystem>();
+        rSystem.eventToLog(1, "new migeons", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString(), myBlaze.ToString());
+    }
 
     public void takeControl(bool take)
     {
@@ -116,6 +122,11 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate() {
+        if (logStep <= Time.time)
+        {
+            rSystem.eventToLog(2, "migeons position", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString());
+            logStep = Time.time + 1.0f; 
+        }
         if (carried || wait)
             return;
 		
@@ -395,6 +406,8 @@ public class MigeonBehavior : MonoBehaviour {
 			cube.GetComponent<MeshRenderer>().material = cubeMaterial;
 			cube.GetComponent<MeshRenderer>().material.color = myBlaze ;
             GetComponent<AudioSource>().PlayOneShot(putCubeSounds[Random.Range(0, putCubeSounds.Length)]);
+
+            rSystem.eventToLog(0,"new cube",newPos,cube.transform.eulerAngles, myBlaze.ToString());
         }
         else{
             GetComponent<AudioSource>().PlayOneShot(errorSound);
