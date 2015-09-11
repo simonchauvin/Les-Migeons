@@ -29,7 +29,21 @@ public class NKlog : MonoBehaviour {
 		}
 	}
 
-	public void writeContent(int eventid, string eventname, string x = "", string y = "", string z = "", string dirx = "", string diry = "", string dirz = "",  string param3 = "", string param4 = "", string param5 = "", string param6 = "", string param7 = ""){
+    public void openFile(string fileName)
+    {
+        if (Application.isWebPlayer)
+        {
+            //online version
+        }
+        else
+        {
+            writer = new StreamWriter("Logs/" + fileName, true);
+            writer.AutoFlush = true;
+            writer.WriteLine("<Events>");
+        }
+    }
+
+    public void writeContent(int eventid, string eventname, string x = "", string y = "", string z = "", string dirx = "", string diry = "", string dirz = "",  string param3 = "", string param4 = "", string param5 = "", string param6 = "", string param7 = ""){
 		if(Application.isWebPlayer){
 			//online version
 		}else{

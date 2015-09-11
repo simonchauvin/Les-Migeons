@@ -37,7 +37,7 @@ public class MigeonBehavior : MonoBehaviour {
     public AudioClip errorSound;
     public AudioClip backSound;
 
-	public Material cubeMaterial;
+	public Material cubeMaterial; 
 
 	//protected bool inPlayerVicinity = false ;
 	public bool isSlave = false ;
@@ -60,7 +60,7 @@ public class MigeonBehavior : MonoBehaviour {
     void Start () {
         jobToDo = true;
         wait = true;
-        Invoke("endWait", 3.0f);
+        Invoke("endWait", 5.0f);
 
         if (code == null) //si pas deja set par un instantiate
             code = Genetics.makeGeneticCode();
@@ -80,7 +80,18 @@ public class MigeonBehavior : MonoBehaviour {
         transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material.color = myBlaze;
 
         rSystem = GameObject.Find("Gameplay").GetComponent<ReplaySystem>();
-        rSystem.eventToLog(1, "new migeons", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString(), myBlaze.ToString());
+        rSystem.eventToLog(1, "new migeons", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString(), myBlaze.ToString(),code.toString());
+    }
+
+    public void replayOverwrite(Genetics.GeneticCode replayCode, Vector3 newPosition, Vector3 newOrientation, Color newBlaze)
+    {
+        takeControl(true);
+        code = replayCode;
+        myBlaze = newBlaze;
+        transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material.color = myBlaze;
+        transform.position = newPosition ;
+        GetComponent<Rigidbody>().MoveRotation(Quaternion.Euler(newOrientation));
+        takeControl(false);
     }
 
     public void takeControl(bool take)
@@ -97,6 +108,7 @@ public class MigeonBehavior : MonoBehaviour {
             wait = false ;
             waitForPlayer = false;
             wantsToMate = false;
+            rSystem.eventToLog(3, "migeons carried", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString());
         }
         else if (wasCarried == true)
         {
@@ -105,6 +117,7 @@ public class MigeonBehavior : MonoBehaviour {
             wasCarried = false;
             snapToFloor();     
             startJob();
+            rSystem.eventToLog(4, "migeons end carried", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString());
         }
     }
 	
@@ -122,7 +135,7 @@ public class MigeonBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate() {
-        if (logStep <= Time.time)
+        if (logStep <= Time.time && !wait)
         {
             rSystem.eventToLog(2, "migeons position", transform.position, transform.rotation.eulerAngles, GetInstanceID().ToString());
             logStep = Time.time + 1.0f; 
@@ -189,11 +202,9 @@ public class MigeonBehavior : MonoBehaviour {
     }
 
 	void doYourJob(){
-		
-		switch(code.actions[stepAction]){
+        switch (code.actions[stepAction]){
 			case Genetics.MA.AVANCER :
-				if(goForward(autoMoveDistance)){
-					 
+				if(goForward(autoMoveDistance)){ 
 					nextStep() ;
 				}
 			break;
@@ -268,7 +279,7 @@ public class MigeonBehavior : MonoBehaviour {
 				return true;
 			if(targetToGo.magnitude > 0.1f){
 				target = Vector3.Normalize(targetToGo-GetComponent<Rigidbody>().position)*5.0f ;
-				Debug.Log ("going to "+target) ;
+				//Debug.Log ("going to "+target) ;
 			}else{
 				target = transform.forward*moveDistance + GetComponent<Rigidbody>().position ;
 				target.x = Mathf.Round(target.x) ;

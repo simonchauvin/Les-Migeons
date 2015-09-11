@@ -4,6 +4,7 @@ using System.Collections;
 public class MigeonGenerator : MonoBehaviour {
 	public Rigidbody migeon ;
 	private GameObject parentMigeon ;
+    public int moreMigeons = 10;
 
     private Transform player;
 	// Use this for initialization
@@ -13,7 +14,7 @@ public class MigeonGenerator : MonoBehaviour {
 		for(int i = 0 ; i <= Genetics.GeneticCode.getNbDesign() ; i++){
 			spawnMigeon (false,i) ;
 		}
-		for(int i = 0 ; i <= 10 ; i++){
+		for(int i = 0 ; i <= moreMigeons ; i++){
 			spawnMigeon (false) ;
 		}
 	}

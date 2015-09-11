@@ -39,7 +39,7 @@ public class ReplaySystem : MonoBehaviour {
         //event id : 0 = new cube (color + pos)
         //event id : 1 = new migeons (color + pos)
         //event id : 2 = migeons position + animation and sound to play ?
-        Debug.Log (eventname+","+param3) ;
+        //Debug.Log (eventname+","+param3) ;
         if (logging)
         {
             nklog.writeContent(eventid, eventname, position.x.ToString(), position.y.ToString(), position.z.ToString(), direction.x.ToString(), direction.y.ToString(), direction.z.ToString(), param3, param4, param5, param6, param7);
