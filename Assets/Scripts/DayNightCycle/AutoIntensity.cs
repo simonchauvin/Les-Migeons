@@ -101,8 +101,11 @@ public class AutoIntensity : MonoBehaviour
         else if(dot > 0.10f)
         {
             if (stars.maxParticles > 0){
-                stars.maxParticles = stars.maxParticles - 5;
+                stars.maxParticles = stars.maxParticles - 10;
+            }else {
+                stars.Clear();
             }
+            
         }
     }
 }
