@@ -53,6 +53,6 @@ public class ReplaySystem : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-	
-	}
+
+    }
 }

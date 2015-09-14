@@ -38,8 +38,7 @@ public class DayNightCycle : MonoBehaviour {
     {
         for(int i = 0; i < nbCube; i++)
         {
-            sunScript.moveSun(i);
-
+            //sunScript.moveSun(i);
         }
     }
 }

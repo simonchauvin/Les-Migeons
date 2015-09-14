@@ -83,7 +83,7 @@ public class AutoIntensity : MonoBehaviour
         i = ((dayAtmosphereThickness - nightAtmosphereThickness) * dot) + nightAtmosphereThickness;
         skyMat.SetFloat("_AtmosphereThickness", i);
 
-        if (dot > 0) {
+        if (dot > 0.2f) {
             transform.Rotate(dayRotateSpeed * Time.deltaTime * skySpeed);
             //transform.Rotate(dayRotateSpeed * skySpeed);
         }

@@ -50,7 +50,7 @@ public class SetSunLight : MonoBehaviour
             //DynamicGI.SetEmissive(lightwall, final);
         }
 
-        Vector3 tvec = Camera.main.transform.position;
+        //Vector3 tvec = Camera.main.transform.position;
         //worldProbe.transform.position = tvec;
 
         //water.material.mainTextureOffset = new Vector2(Time.time / 100, 0);

@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour {
 	private GameObject releaseMigeonLabel;
     private GameObject mateMigeonLabel;
 
+    private Camera playerCamera;
+
     Transform carriedMigeon = null;
     Transform migeonItWantsToFuck = null;
     float timeWantToFuck = 0;
@@ -21,6 +23,8 @@ public class PlayerController : MonoBehaviour {
         mateMigeonLabel = GameObject.Find("MateMigeonLabel");
 
         setLabel(MESSAGE.NONE);
+
+        playerCamera = GameObject.Find("FirstPersonCharacter").GetComponent<Camera>();
 	}
 
     private enum MESSAGE{
@@ -49,13 +53,13 @@ public class PlayerController : MonoBehaviour {
         {
             RaycastHit hit;
             bool found = false;
-            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
+            if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
                 found = true;
             if(!found)
-                if(Physics.Raycast(Camera.main.transform.position,  Quaternion.AngleAxis(-10, Vector3.up) * Camera.main.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
+                if(Physics.Raycast(playerCamera.transform.position,  Quaternion.AngleAxis(-10, Vector3.up) * playerCamera.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
                     found = true;
             if(!found)
-                if(Physics.Raycast(Camera.main.transform.position, Quaternion.AngleAxis(+10, Vector3.up) * Camera.main.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
+                if(Physics.Raycast(playerCamera.transform.position, Quaternion.AngleAxis(+10, Vector3.up) * playerCamera.transform.forward, out hit, 3f, LayerMask.GetMask("Migeon")))
                     found = true;
 
             if (found)
@@ -78,7 +82,7 @@ public class PlayerController : MonoBehaviour {
 		{
             //On porte un migeon
             carriedMigeon.transform.LookAt(carriedMigeon.transform.position + transform.forward, Vector3.up); 
-            Vector3 posMigeonInArms = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+            Vector3 posMigeonInArms = playerCamera.transform.position + playerCamera.transform.forward * 2f;
             carriedMigeon.transform.position = posMigeonInArms;
 
             //On regarde s'il veut niquer
